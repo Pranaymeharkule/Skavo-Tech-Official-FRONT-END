@@ -63,14 +63,15 @@ function CountUp({ to, suffix = "", prefix = "" }) {
 const CAPABILITIES = [
   { num: "01", icon: Monitor,     title: "Web & App Development",  desc: "We design and build websites, web apps, and platforms that are fast, beautiful, and ready to scale the moment traffic spikes.",   tags: ["React", "Next.js", "Node.js"] },
   { num: "02", icon: Smartphone,  title: "Mobile Applications",    desc: "Native-quality iOS and Android apps built with React Native — one codebase, two platforms, zero compromises on feel.",           tags: ["iOS", "Android", "React Native"] },
-  { num: "03", icon: Cloud,       title: "Cloud & Infrastructure",  desc: "We set up and manage the cloud systems that keep your product alive 24/7 — auto-scaling, monitored, and bulletproof.",           tags: ["AWS", "GCP", "DevOps"] },
-  { num: "04", icon: Bot,         title: "AI & Smart Features",     desc: "We embed AI directly into your product — intelligent search, chatbots, recommendations, and automation that actually works.",    tags: ["LLMs", "Automation", "ML"] },
-  { num: "05", icon: ShieldCheck, title: "Security & Compliance",   desc: "From penetration testing to SOC 2 readiness — we harden your product so your users' data stays safe and your audits pass.",     tags: ["SOC 2", "GDPR", "Pen Testing"] },
-  { num: "06", icon: BarChart3,   title: "Data & Analytics",        desc: "We turn scattered numbers into real-time dashboards and reports that let you make faster, smarter business decisions.",          tags: ["Dashboards", "BI", "Pipelines"] },
+  { num: "03", icon: Zap,         title: "Digital Marketing",       desc: "We help you reach the right audience with targeted campaigns that drive real results.", tags: ["Speed", "Scalability", "Cost Reduction"] },
+  { num: "04", icon: Cloud,       title: "Cloud & Infrastructure",  desc: "We set up and manage the cloud systems that keep your product alive 24/7 — auto-scaling, monitored, and bulletproof.",           tags: ["AWS", "GCP", "DevOps"] },
+  { num: "05", icon: Bot,         title: "AI & Smart Features",     desc: "We embed AI directly into your product — intelligent search, chatbots, recommendations, and automation that actually works.",    tags: ["LLMs", "Automation", "ML"] },
+  { num: "06", icon: ShieldCheck, title: "Security & Compliance",   desc: "From penetration testing to SOC 2 readiness — we harden your product so your users' data stays safe and your audits pass.",     tags: ["SOC 2", "GDPR", "Pen Testing"] },
+  { num: "07", icon: BarChart3,   title: "Data & Analytics",        desc: "We turn scattered numbers into real-time dashboards and reports that let you make faster, smarter business decisions.",          tags: ["Dashboards", "BI", "Pipelines"] },
 ];
 
 const WORKS = [
-  { client: "MedFlowAI", industry: "Healthcare",  year: "2025", result: "61% more accurate diagnoses",   sub: "An AI triage engine processing 50,000 patient records daily — built from scratch in 14 weeks.",      color: "#7c3aed" },
+  { client: "MBA SAAS", industry: "Accounting",  year: "2025", result: "61% more accurate diagnoses",   sub: "An AI triage engine processing 50,000 patient records daily — built from scratch in 14 weeks.",      color: "#7c3aed" },
   { client: "CartPilot",  industry: "E-Commerce", year: "2024", result: "34% jump in conversions",       sub: "Complete rebuild of a $40M ARR storefront — pages now load in under 0.8 seconds on mobile.",         color: "#6d28d9" },
   { client: "FleetOps",   industry: "Logistics",  year: "2025", result: "28% reduction in fuel costs",   sub: "Real-time tracking platform for 12,000 delivery trucks across 6 countries. 99.97% uptime.",          color: "#5b21b6" },
 ];
@@ -173,53 +174,7 @@ export default function SkavoTech() {
         ::-webkit-scrollbar-thumb { background:#7c3aed; border-radius:4px; }
       `}</style>
 
-      {/* ════════ NAV ════════ */}
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-400 ${
-        scrolled ? "py-3 bg-white/95 backdrop-blur-xl shadow-sm shadow-violet-100/50" : "py-5 bg-transparent"
-      }`}>
-        <div className="max-w-7xl mx-auto px-5 sm:px-8 flex items-center justify-between">
-          <a href="#" className="serif text-2xl font-bold text-violet-950 tracking-tight">
-            Skavo<span className="text-fuchsia-600 italic">.</span>
-          </a>
-
-          <div className="hidden lg:flex items-center gap-1">
-            {NAV.map(l => (
-              <a key={l.label} href={l.href}
-                className="sans px-4 py-2 text-sm font-medium text-gray-500 hover:text-violet-800 rounded-lg hover:bg-violet-50 transition-all">
-                {l.label}
-              </a>
-            ))}
-          </div>
-
-          <a href="#contact"
-            className="hidden lg:flex items-center gap-2 px-6 py-3 bg-violet-900 text-white text-sm font-semibold rounded-xl hover:bg-fuchsia-700 transition-all shadow-lg shadow-violet-200 hover:scale-105 active:scale-95">
-            Start a Project <ArrowRight />
-          </a>
-
-          <button onClick={() => setMenuOpen(!menuOpen)}
-            className="lg:hidden p-2 rounded-xl hover:bg-violet-50 text-violet-900">
-            {menuOpen ? <CloseIcon /> : <MenuIcon />}
-          </button>
-        </div>
-
-        <AnimatePresence>
-          {menuOpen && (
-            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
-              className="lg:hidden bg-white border-t border-violet-50 shadow-xl px-6 py-5 flex flex-col gap-1">
-              {NAV.map(l => (
-                <a key={l.label} href={l.href} onClick={() => setMenuOpen(false)}
-                  className="sans text-base font-semibold text-gray-700 hover:text-violet-800 hover:bg-violet-50 px-3 py-3 rounded-xl transition">
-                  {l.label}
-                </a>
-              ))}
-              <a href="#contact" onClick={() => setMenuOpen(false)}
-                className="mt-3 text-center px-6 py-3.5 bg-violet-900 text-white font-bold text-sm rounded-xl">
-                Start a Project
-              </a>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </nav>
+      
 
       {/* ════════ HERO ════════ */}
       <section className="relative min-h-screen flex items-center pt-28 pb-20 overflow-hidden bg-[#fdfdff]">
@@ -268,103 +223,95 @@ export default function SkavoTech() {
               </motion.div>
 
               {/* Social proof */}
-              <motion.div variants={{ hidden:{opacity:0}, visible:{opacity:1} }}
-                className="flex items-center gap-5 flex-wrap">
-                <div className="flex -space-x-3">
-                  {["SC","MW","PN","JL","AR"].map((a, i) => (
-                    <div key={i} className="w-10 h-10 rounded-full border-2 border-white flex items-center justify-center text-xs font-bold text-white"
-                      style={{ background:`hsl(${270+i*12},60%,${36+i*6}%)`, zIndex:5-i }}>
-                      {a}
-                    </div>
-                  ))}
-                </div>
-                <div>
-                  <div className="flex gap-0.5 mb-1">{[0,1,2,3,4].map(i=><StarIcon key={i}/>)}</div>
-                  <p className="sans text-xs text-gray-500"><strong className="text-gray-700">4.9/5</strong> · 200+ satisfied clients</p>
-                </div>
-              </motion.div>
+<motion.div
+  variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
+  className="flex items-center gap-5 flex-wrap"
+>
+  {/* Avatar images */}
+  <div className="flex -space-x-3">
+    {[
+      "https://randomuser.me/api/portraits/men/32.jpg",
+      "https://randomuser.me/api/portraits/women/44.jpg",
+      "https://randomuser.me/api/portraits/men/76.jpg",
+      "https://randomuser.me/api/portraits/women/68.jpg",
+      "https://randomuser.me/api/portraits/men/91.jpg",
+    ].map((img, i) => (
+      <img
+        key={i}
+        src={img}
+        alt="client"
+        className="w-10 h-10 rounded-full border-2 border-white object-cover"
+        style={{ zIndex: 5 - i }}
+      />
+    ))}
+  </div>
+
+  {/* Rating */}
+  <div>
+    <div className="flex gap-0.5 mb-1">
+      {[0, 1, 2, 3, 4].map((i) => (
+        <StarIcon key={i} />
+      ))}
+    </div>
+    <p className="sans text-xs text-gray-500">
+      <strong className="text-gray-700">4.9/5</strong> · 200+ satisfied clients
+    </p>
+  </div>
+</motion.div>
             </motion.div>
 
-            {/* Right — Live Project Card */}
-            <motion.div initial={{ opacity:0, x:36 }} animate={{ opacity:1, x:0 }}
-              transition={{ duration:.8, ease:"easeOut" }} className="relative">
+          {/* Right — Ultra Premium Illustration */}
+<motion.div
+  initial={{ opacity: 0, x: 40 }}
+  animate={{ opacity: 1, x: 0 }}
+  transition={{ duration: 0.8 }}
+  className="relative flex justify-center items-center"
+>
 
-              {/* Glow halo */}
-              <div className="absolute -inset-5 bg-gradient-to-tr from-violet-500/10 to-fuchsia-500/10 blur-2xl rounded-[3rem]" />
+  {/* Background Glow */}
+  <div className="absolute w-[450px] h-[450px] 
+    bg-gradient-to-tr from-violet-400/30 to-fuchsia-400/30 
+    blur-[100px] rounded-full" />
 
-              <div className="relative bg-white/80 backdrop-blur-2xl rounded-[2.5rem] border border-white/90 shadow-[0_24px_64px_rgba(109,40,217,0.1)] overflow-hidden">
+  <div className="relative group">
 
-                {/* Card header */}
-                <div className="px-8 py-6 flex items-center justify-between border-b border-slate-50/80 bg-gradient-to-r from-violet-950 to-violet-800">
-                  <div>
-                    <p className="sans text-xs text-violet-300 font-semibold mb-0.5 uppercase tracking-wider">Currently Building</p>
-                    <p className="serif text-white font-bold text-xl tracking-tight">Aetheris · AI Platform</p>
-                  </div>
-                  <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-500/20 border border-emerald-400/30 rounded-full">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 pulse-live" />
-                    <span className="sans text-[10px] font-bold text-emerald-300 uppercase tracking-wider">Live Sprint</span>
-                  </div>
-                </div>
+    {/* Gradient Border Glow */}
+    <div className="absolute -inset-[1px] rounded-[2.6rem] 
+      bg-gradient-to-r from-violet-500 to-fuchsia-500 
+      opacity-20 blur-md" />
 
-                <div className="p-7">
-                  {/* Metrics row */}
-                  <div className="grid grid-cols-3 gap-3 mb-6">
-                    {[
-                      { label:"Inference Time", val:"12ms",  sub:"↓ 40% faster" },
-                      { label:"Throughput",     val:"8.2k/s",sub:"↑ 2× this week" },
-                      { label:"Accuracy",       val:"97.4%", sub:"↑ 3.2pts" },
-                    ].map(({ label, val, sub }) => (
-                      <div key={label} className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100/80 text-center">
-                        <p className="serif text-lg font-bold text-slate-900 leading-none mb-1">{val}</p>
-                        <p className="sans text-[9px] font-bold text-slate-400 uppercase tracking-wide mb-1">{label}</p>
-                        <p className="sans text-[9px] text-green-500 font-semibold">{sub}</p>
-                      </div>
-                    ))}
-                  </div>
+    {/* Main Card */}
+    <div className="relative bg-white backdrop-blur-2xl rounded-[2.5rem] 
+      border border-white/50 
+      shadow-[0_25px_80px_rgba(124,58,237,0.18)] 
+      p-10 transition-all duration-500 
+      hover:shadow-[0_35px_100px_rgba(124,58,237,0.25)] overflow-hidden">
 
-                  {/* Progress bars */}
-                  <div className="space-y-3 mb-6">
-                    <p className="sans text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400 mb-3">Sprint 6 — Delivery Progress</p>
-                    {[
-                      { task:"AI Model Integration",     pct:94, color:"#7c3aed" },
-                      { task:"API Gateway & Auth",       pct:82, color:"#c026d3" },
-                      { task:"Performance Optimisation", pct:100, color:"#16a34a" },
-                      { task:"Mobile Responsiveness",    pct:67, color:"#7c3aed" },
-                    ].map(({ task, pct, color }) => (
-                      <div key={task}>
-                        <div className="flex justify-between mb-1.5">
-                          <span className="sans text-xs text-slate-600 font-medium">{task}</span>
-                          <span className="sans text-xs font-bold" style={{ color }}>{pct}%</span>
-                        </div>
-                        <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                          <motion.div initial={{ width:0 }} animate={{ width:`${pct}%` }}
-                            transition={{ duration:1.2, delay:0.7, ease:[0.22,1,.36,1] }}
-                            className="h-full rounded-full"
-                            style={{ background: pct===100 ? "#16a34a" : `linear-gradient(90deg, ${color}, #c026d3)` }} />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+      {/* Light Reflection */}
+      <div className="absolute inset-0 bg-gradient-to-br 
+        from-white to-transparent rounded-[2.1rem] pointer-events-none" />
 
-                  {/* Team */}
-                  <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-                    <div className="flex items-center gap-2.5">
-                      <div className="flex -space-x-2">
-                        {[["AD","#5b21b6"],["KR","#7c3aed"],["SL","#a855f7"],["NP","#6d28d9"]].map(([a,c])=>(
-                          <div key={a} className="w-7 h-7 rounded-full border-2 border-white flex items-center justify-center text-[9px] font-bold text-white"
-                            style={{ background:c }}>{a}</div>
-                        ))}
-                      </div>
-                      <span className="sans text-xs text-slate-400 font-medium">4-person team</span>
-                    </div>
-                    <span className="sans text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">On Track ✓</span>
-                  </div>
-                </div>
-              </div>
+     
 
-             
-            </motion.div>
+      {/* Floating Illustration */}
+      <motion.img 
+        src="/illustration.png"
+        alt="Development Illustration"
+        className="w-[420px] object-contain mx-auto relative z-10"
+        animate={{ y: [0, -12, 0] }}
+        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+      />
 
+    </div>
+  </div>
+
+  {/* Bottom Shadow */}
+  <div className="absolute bottom-[-30px] w-[70%] h-[40px] 
+    bg-black/10 blur-2xl rounded-full mx-auto left-0 right-0" />
+
+  
+
+</motion.div>
           </div>
         </div>
       </section>
@@ -460,10 +407,7 @@ export default function SkavoTech() {
                         {cap.desc}
                       </p>
 
-                      {/* Arrow */}
-                      <div className="hidden lg:flex w-12 h-12 rounded-full border border-black items-center justify-center text-slate-300 group-hover:bg-white group-hover:text-white group-hover:border-slate-900 transition-all duration-400 flex-shrink-0">
-                        <ArrowUpRight />
-                      </div>
+                     
                     </div>
                   </div>
                 </Reveal>
@@ -507,9 +451,7 @@ export default function SkavoTech() {
                         <span className="sans text-[15px] font-black uppercase tracking-[0.2em] text-black block mb-1 group-hover:text-violet-500 transition-colors">{w.industry}</span>
                         <span className="sans text-[12px] font-bold text-black">{w.year}</span>
                       </div>
-                      <div className="w-11 h-11 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-slate-900 group-hover:text-white transition-all duration-400 shadow-sm">
-                        <ArrowUpRight />
-                      </div>
+                     
                     </div>
 
                     <h3 className="serif text-3xl font-bold text-slate-900 tracking-tight mb-3 group-hover:text-violet-800 transition-colors">
@@ -547,7 +489,7 @@ export default function SkavoTech() {
           <Reveal className="text-center mb-20">
             <div className="flex items-center justify-center gap-3 mb-6">
               <div className="h-px w-10 bg-violet-400" />
-              <span className="sans text-violet-600 font-black uppercase tracking-[0.35em] text-[10px]">How We Work</span>
+              <span className="sans text-violet-600 font-black uppercase tracking-[0.35em] text-[25px]">How We Work</span>
               <div className="h-px w-10 bg-violet-400" />
             </div>
             <h2 className="serif font-bold text-slate-900 tracking-tight leading-[1.07]"
@@ -560,29 +502,83 @@ export default function SkavoTech() {
             </p>
           </Reveal>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {PROCESS.map((p, i) => {
-              const Icon = p.icon;
-              return (
-                <Reveal key={i} delay={i*.1}>
-                  <div className="group relative">
-                    {/* step number background */}
-                    <div className="w-12 h-12 rounded-2xl bg-white border-2 border-slate-100 flex items-center justify-center mb-7 shadow-sm group-hover:bg-violet-900 group-hover:border-violet-900 transition-all duration-400">
-                      <span className="sans text-xs font-black text-slate-400 group-hover:text-white transition-colors">0{i+1}</span>
-                    </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+             {PROCESS.map((p, i) => {
+    const Icon = p.icon;
+    return (
+      <Reveal key={i} delay={i * 0.1}>
+        <div className="group relative">
 
-                    <div className="p-8 rounded-[2rem] bg-white border border-slate-100 h-full transition-all duration-400 group-hover:shadow-[0_28px_56px_rgba(124,58,237,0.10)] group-hover:border-violet-100">
-                      <div className="w-12 h-12 rounded-xl bg-violet-50 flex items-center justify-center mb-6 group-hover:bg-violet-100 transition-colors float-icon">
-                        <Icon size={22} className="text-violet-600" strokeWidth={1.8} />
-                      </div>
-                      <h3 className="serif text-xl font-bold text-slate-900 mb-3">{p.title}</h3>
-                      <p className="sans text-slate-500 text-sm leading-relaxed">{p.desc}</p>
-                    </div>
-                  </div>
-                </Reveal>
-              );
-            })}
+          {/* Step Number */}
+          <div className="
+            w-12 h-12 rounded-2xl bg-white 
+            border-2 border-black flex items-center justify-center mb-7 
+            transition-all duration-300
+            group-hover:bg-black group-hover:text-white
+            group-hover:shadow-[0_10px_25px_rgba(0,0,0,0.25)]
+          ">
+            <span className="text-xs font-black text-black group-hover:text-white transition">
+              0{i + 1}
+            </span>
           </div>
+
+          {/* Card */}
+          <div className="
+            relative p-8 rounded-[2rem] bg-white 
+            border-2 border-black h-full
+            transition-all duration-300
+            group-hover:-translate-y-2
+            group-hover:shadow-[0_25px_60px_rgba(0,0,0,0.15)]
+          ">
+
+            {/* Glow Effect */}
+            <div className="
+              absolute inset-0 rounded-[2rem] opacity-0 
+              group-hover:opacity-100 transition duration-300
+              bg-gradient-to-br from-violet-200/40 via-transparent to-indigo-200/40
+              blur-xl -z-10
+            " />
+
+            {/* Icon */}
+            <div className="
+              w-12 h-12 rounded-xl 
+              bg-gray-100 flex items-center justify-center mb-6
+              border border-black
+              transition-all duration-300
+              group-hover:bg-black
+              float-icon
+            ">
+              <Icon
+                size={22}
+                className="text-black group-hover:text-white transition"
+                strokeWidth={1.8}
+              />
+            </div>
+
+            {/* Title */}
+            <h3 className="
+              text-xl font-bold text-black mb-3
+              group-hover:text-violet-700 transition
+            ">
+              {p.title}
+            </h3>
+
+            {/* Description */}
+            <p className="
+              text-gray-600 text-sm leading-relaxed
+              group-hover:text-gray-800 transition
+            ">
+              {p.desc}
+            </p>
+
+          </div>
+        </div>
+      </Reveal>
+    );
+  })}
+      </div>
+
+          
         </div>
       </section>
 
@@ -592,7 +588,7 @@ export default function SkavoTech() {
           <Reveal className="text-center mb-16">
             <div className="flex items-center justify-center gap-3 mb-6">
               <div className="h-px w-10 bg-fuchsia-400" />
-              <span className="sans text-fuchsia-600 font-black uppercase tracking-[0.35em] text-[10px]">Client Stories</span>
+              <span className="sans text-fuchsia-600 font-black uppercase tracking-[0.35em] text-[25px]">Client Stories</span>
               <div className="h-px w-10 bg-fuchsia-400" />
             </div>
             <h2 className="serif font-bold text-slate-900 tracking-tight"
@@ -611,12 +607,12 @@ export default function SkavoTech() {
                       initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0, y:-20 }}
                       transition={{ duration:.5, ease:[.22,1,.36,1] }}
                       className="absolute inset-0">
-                      <div className="bg-white rounded-3xl p-9 sm:p-14 shadow-2xl shadow-violet-100/60 border border-violet-100 h-full flex flex-col justify-between">
+                      <div className="bg-white rounded-3xl p-9 sm:p-14 shadow-2xl shadow-violet-100/60 border border-black h-full flex flex-col justify-between">
                         <div>
-                          <div className="serif text-7xl text-violet-100 leading-none mb-5 font-bold select-none">"</div>
-                          <p className="sans text-xl sm:text-2xl text-slate-700 leading-relaxed italic font-light">{r.quote}</p>
+                          <div className="serif text-7xl text-violet-900 leading-none mb-5 font-extrabold select-none">"</div>
+                          <p className="sans text-xl sm:text-2xl text-black leading-relaxed italic font-light">{r.quote}</p>
                         </div>
-                        <div className="flex flex-col sm:flex-row sm:items-center gap-4 mt-8 pt-6 border-t border-slate-100">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-4 mt-8 pt-6 border-t border-black">
                           <div className="flex items-center gap-4">
                             <div className="w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-sm text-white"
                               style={{ background:"linear-gradient(135deg,#4c1d95,#a855f7)" }}>
@@ -653,7 +649,7 @@ export default function SkavoTech() {
             <Reveal>
               <div className="flex items-center gap-3 mb-6">
                 <div className="h-px w-10 bg-violet-400" />
-                <span className="sans text-violet-600 font-black uppercase tracking-[0.35em] text-[10px]">Who We Are</span>
+                <span className="sans text-violet-600 font-black uppercase tracking-[0.35em] text-[25px]">Who We Are</span>
               </div>
               <h2 className="serif font-bold text-slate-900 tracking-tight leading-[1.07] mb-8"
                 style={{ fontSize:"clamp(2rem, 4vw, 3.4rem)" }}>
@@ -670,7 +666,7 @@ export default function SkavoTech() {
               <div className="flex flex-wrap gap-3">
                 {["Outcome-First","Full IP Ownership","No Lock-In","24h Response"].map((t,i)=>(
                   <span key={i}
-                    className="sans px-5 py-2.5 border-2 border-violet-100 text-violet-800 rounded-full text-sm font-semibold hover:border-fuchsia-400 hover:text-fuchsia-700 hover:bg-fuchsia-50 transition-all cursor-default">
+                    className="sans px-5 py-2.5 border-2 border-black text-violet-800 rounded-full text-sm font-semibold hover:border-fuchsia-400 hover:text-fuchsia-700 hover:bg-fuchsia-50 transition-all cursor-default">
                     {t}
                   </span>
                 ))}
@@ -685,10 +681,10 @@ export default function SkavoTech() {
                   { stat:"8 yrs", desc:"Industry Experience",    c:"#6d28d9", bg:"#f5f3ff" },
                   { stat:"4.9★",  desc:"Average Client Rating",  c:"#a855f7", bg:"#fdf4ff" },
                 ].map(({ stat, desc, c, bg },i)=>(
-                  <div key={i} className="glow-hover p-7 rounded-3xl border border-violet-100 hover:shadow-xl hover:shadow-violet-100/50 transition-all"
+                  <div key={i} className="glow-hover p-7 rounded-3xl border border-black hover:shadow-xl hover:shadow-violet-100/50 transition-all"
                     style={{ backgroundColor:bg }}>
                     <p className="serif font-bold leading-none mb-2" style={{ color:c, fontSize:"clamp(2rem,4vw,2.8rem)" }}>{stat}</p>
-                    <p className="sans text-slate-500 text-sm leading-snug">{desc}</p>
+                    <p className="sans text-black text-sm leading-snug">{desc}</p>
                   </div>
                 ))}
               </div>
@@ -703,7 +699,7 @@ export default function SkavoTech() {
           <Reveal className="text-center mb-14">
             <div className="flex items-center justify-center gap-3 mb-6">
               <div className="h-px w-10 bg-violet-400" />
-              <span className="sans text-violet-600 font-black uppercase tracking-[0.35em] text-[10px]">FAQ</span>
+              <span className="sans text-violet-600 font-black uppercase tracking-[0.35em] text-[25px]">FAQ</span>
               <div className="h-px w-10 bg-violet-400" />
             </div>
             <h2 className="serif font-bold text-slate-900 tracking-tight"
@@ -715,7 +711,7 @@ export default function SkavoTech() {
             {FAQS.map((f,i)=>(
               <Reveal key={i} delay={i*.05}>
                 <div className={`rounded-2xl border overflow-hidden transition-all ${
-                  openFaq===i ? "border-violet-300 bg-white shadow-lg shadow-violet-100" : "border-slate-100 bg-white hover:border-violet-200"
+                  openFaq===i ? "border-violet-300 bg-white shadow-lg shadow-violet-100" : "border-black bg-white hover:border-violet-200"
                 }`}>
                   <button onClick={()=>setOpenFaq(openFaq===i?null:i)}
                     className="w-full flex items-center justify-between px-7 py-5 sm:py-6 text-left gap-6">
@@ -753,10 +749,7 @@ export default function SkavoTech() {
             <div className="absolute bottom-0 right-1/4 w-64 h-64 rounded-full bg-violet-300/20 blur-3xl" />
 
             <div className="relative z-10 px-8 sm:px-16 py-16 sm:py-24 text-center">
-              <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 border border-white/20 text-white text-[10px] font-bold uppercase tracking-widest rounded-full mb-8">
-                <span className="w-1.5 h-1.5 bg-green-400 rounded-full pulse-live" />
-                Limited Availability · Q3 2026
-              </div>
+             
 
               <h2 className="serif font-bold text-white tracking-tight leading-[1.05] mb-7"
                 style={{ fontSize:"clamp(2.4rem,6vw,5rem)" }}>
@@ -770,89 +763,24 @@ export default function SkavoTech() {
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a href="mailto:hello@skavo.tech"
-                  className="sans flex items-center justify-center gap-2.5 px-10 py-5 bg-white text-violet-900 rounded-2xl font-bold text-base hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-black/20">
+                  className="sans flex items-center justify-center gap-2.5 px-10 py-5 bg-white text-violet-900 rounded-2xl font-bold text-base hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-black/20 border border-transparent">
                   Book a Free Strategy Call <ArrowRight />
                 </a>
                 <a href="#work"
-                  className="sans flex items-center justify-center gap-2.5 px-10 py-5 bg-transparent border-2 border-white/25 text-white rounded-2xl font-semibold text-base hover:bg-white/10 transition-all">
+                  className="sans flex items-center justify-center gap-2.5 px-10 py-5 bg-transparent border-2 border-white/25 text-white rounded-2xl font-semibold text-base hover:bg-white/10 transition-all ">
                   View Case Studies
                 </a>
               </div>
-
-              <p className="sans text-violet-300 text-xs mt-8 font-medium">
-                No commitment required · Free 30-min discovery call · Response within 24 hours
-              </p>
+              
             </div>
           </div>
         </Reveal>
       </section>
 
 
-       {/* ════════ STATS BAND ════════ */}
-      <section className="py-12 sm:py-16 bg-violet-950 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.05]"
-          style={{ backgroundImage:"repeating-linear-gradient(45deg,#fff,#fff 1px,transparent 0,transparent 42px)" }} />
-        <div className="max-w-7xl mx-auto px-5 sm:px-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-white text-center relative z-10">
-          {[
-            { to:80,  suffix:"+",    prefix:"",  label:"Happy Clients"     },
-            { to:200, suffix:"M+",   prefix:"$", label:"Revenue Generated" },
-            { to:14,  suffix:"",     prefix:"",  label:"Countries Served"  },
-            { to:99,  suffix:".97%", prefix:"",  label:"Average Uptime"    },
-          ].map(({ to, suffix, prefix, label }, i) => (
-            <Reveal key={i} delay={i*.09}>
-              <p className="serif text-4xl sm:text-5xl font-bold mb-2">
-                <CountUp to={to} suffix={suffix} prefix={prefix} />
-              </p>
-              <p className="sans text-sm font-medium text-violet-300">{label}</p>
-            </Reveal>
-          ))}
-        </div>
-      </section>
+      
 
-      {/* ════════ FOOTER ════════ */}
-      <footer className="pt-16 pb-8 bg-white border-t border-violet-50">
-        <div className="max-w-7xl mx-auto px-5 sm:px-8">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-14">
-            <div className="sm:col-span-2">
-              <p className="serif text-3xl font-bold text-violet-950 tracking-tight mb-4">
-                Skavo<span className="text-fuchsia-600 italic">.</span>
-              </p>
-              <p className="sans text-slate-400 max-w-xs leading-relaxed text-sm mb-7">
-                A technology partner for ambitious companies. We design, build, and scale digital products that create measurable business value.
-              </p>
-              <div className="flex gap-3">
-                {[["X","Twitter"],["in","LinkedIn"],["gh","GitHub"],["dr","Dribbble"]].map(([s,l])=>(
-                  <button key={s} aria-label={l}
-                    className="serif w-10 h-10 rounded-xl border-2 border-violet-100 text-violet-400 text-xs font-bold hover:border-fuchsia-400 hover:text-fuchsia-600 hover:bg-fuchsia-50 transition-all">
-                    {s}
-                  </button>
-                ))}
-              </div>
-            </div>
-            {[
-              { title:"Services", links:["Web & App Development","Mobile Applications","Cloud & Infrastructure","AI Features","Security & Compliance"] },
-              { title:"Company",  links:["About Us","Our Work","Case Studies","Careers","Contact"] },
-            ].map((col,i)=>(
-              <div key={i}>
-                <p className="sans font-bold text-slate-900 mb-5 text-xs uppercase tracking-[0.15em]">{col.title}</p>
-                <ul className="space-y-3">
-                  {col.links.map(l=>(
-                    <li key={l}><a href="#" className="sans text-slate-400 hover:text-fuchsia-600 transition-colors text-sm">{l}</a></li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-          <div className="pt-6 border-t border-violet-50 flex flex-col sm:flex-row justify-between items-center gap-3">
-            <p className="sans text-slate-400 text-xs">© 2026 Skavo Technologies Pvt. Ltd. All rights reserved.</p>
-            <div className="flex gap-6">
-              {["Privacy Policy","Terms of Service","Cookie Policy"].map(l=>(
-                <a key={l} href="#" className="sans text-slate-400 hover:text-fuchsia-600 transition-colors text-xs">{l}</a>
-              ))}
-            </div>
-          </div>
-        </div>
-      </footer>
+      
 
     </div>
   );

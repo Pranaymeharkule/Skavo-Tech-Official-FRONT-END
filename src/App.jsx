@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
 
@@ -23,12 +23,17 @@ import AdminEnrollments from "./pages/admin/AdminEnrollments";
 
 export default function App() {
   const location = useLocation();
+
+  // ✅ detect admin route
   const isAdminRoute = location.pathname.startsWith("/admin");
 
   return (
     <>
+      {/* ✅ Show Navbar ONLY for public site */}
+      {!isAdminRoute && <Navbar />}
 
       <Routes>
+
         {/* ================= PUBLIC WEBSITE ================= */}
         <Route path="/" element={<Home />} />
         <Route path="/services" element={<Services />} />
@@ -42,20 +47,26 @@ export default function App() {
         <Route path="/admin/login" element={<AdminLogin />} />
 
         {/* ================= ADMIN PANEL ================= */}
-        <Route path="/admin" element={
-  <ProtectedRoute>
-    <AdminLayout />
-  </ProtectedRoute>
-}>
-  <Route path="dashboard" element={<AdminDashboard />} />
-  <Route path="leads" element={<AdminLeads />} />
-  <Route path="applications" element={<AdminApplications />} />
-  <Route path="vacancies" element={<AdminVacancies />} />
-  <Route path="projects" element={<AdminProjects />} />
-  <Route path="enrollments" element={<AdminEnrollments />} />
-</Route>
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="leads" element={<AdminLeads />} />
+          <Route path="applications" element={<AdminApplications />} />
+          <Route path="vacancies" element={<AdminVacancies />} />
+          <Route path="projects" element={<AdminProjects />} />
+          <Route path="enrollments" element={<AdminEnrollments />} />
+        </Route>
+
       </Routes>
 
+      {/* ✅ Show Footer ONLY for public site */}
+      {!isAdminRoute && <Footer />}
     </>
   );
 }
