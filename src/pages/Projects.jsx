@@ -147,24 +147,46 @@ export default function ProjectsPage() {
 
       
 
-      {/* HERO */}
-      <section className="relative pt-36 pb-20 overflow-hidden bg-[#fdfdff]">
+      {/* PORTFOLIO HERO */}
+      <section className="relative flex flex-col items-center justify-center overflow-hidden bg-[#fdfdff] py-32 sm:py-40 min-h-[65vh]">
+        
+        {/* ENHANCED BACKGROUND: Added the subtle grid pattern alongside your blur circles */}
         <div className="absolute inset-0 pointer-events-none">
+          {/* Subtle Grid overlay */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+          
+          {/* Your exact original blur circles */}
           <div className="absolute top-[-8%] left-[-4%] w-[55%] h-[55%] rounded-full bg-violet-100/60 blur-[110px]" />
           <div className="absolute bottom-[5%] right-[-4%] w-[45%] h-[50%] rounded-full bg-fuchsia-100/50 blur-[110px]" />
         </div>
-        <div className="max-w-7xl mx-auto px-5 sm:px-8 relative z-10">
-          <motion.div initial="hidden" animate="visible" variants={{hidden:{opacity:0},visible:{opacity:1,transition:{staggerChildren:.09}}}}>
-            <motion.div variants={{hidden:{opacity:0,y:14},visible:{opacity:1,y:0}}} className="flex items-center gap-3 mb-7">
+        
+        <div className="w-full max-w-7xl mx-auto px-5 sm:px-8 relative z-10">
+          
+          {/* Added flex-col, items-center, and text-center to properly align everything in the middle */}
+          <motion.div 
+            initial="hidden" 
+            animate="visible" 
+            variants={{hidden:{opacity:0},visible:{opacity:1,transition:{staggerChildren:.09}}}}
+            className="flex flex-col items-center text-center w-full max-w-3xl mx-auto"
+          >
+            
+            {/* Added justify-center and a second line on the right side for perfect symmetry */}
+            <motion.div variants={{hidden:{opacity:0,y:14},visible:{opacity:1,y:0}}} className="flex items-center justify-center gap-3 mb-7">
               <div className="h-px w-10 bg-violet-500" />
               <span className="sans text-violet-600 font-black uppercase tracking-[0.35em] text-[25px]">Our Portfolio</span>
+              <div className="h-px w-10 bg-violet-500" /> {/* Added right line */}
             </motion.div>
-            <motion.h1 variants={{hidden:{opacity:0,y:20},visible:{opacity:1,y:0}}} className="serif font-bold text-slate-900 leading-[1.05] tracking-tight mb-7" style={{fontSize:"clamp(3rem,6vw,5.2rem)"}}>
+            
+            {/* Added mx-auto to center the heading box. Colors are exactly as you provided. */}
+            <motion.h1 variants={{hidden:{opacity:0,y:20},visible:{opacity:1,y:0}}} className="serif font-bold text-slate-900 leading-[1.05] tracking-tight mb-7 mx-auto" style={{fontSize:"clamp(3rem,6vw,5.2rem)"}}>
               200+ Products.<br /><span className="grad italic">Real Results.</span>
             </motion.h1>
-            <motion.p variants={{hidden:{opacity:0,y:18},visible:{opacity:1,y:0}}} className="sans text-lg text-slate-500 leading-relaxed max-w-xl">
+            
+            {/* Added mx-auto to center the paragraph block. Colors are exactly as you provided. */}
+            <motion.p variants={{hidden:{opacity:0,y:18},visible:{opacity:1,y:0}}} className="sans text-lg text-slate-500 leading-relaxed max-w-xl mx-auto">
               From early-stage MVPs to enterprise platforms — every project we ship is measured by one metric: <strong className="text-slate-800">does it move the business forward?</strong>
             </motion.p>
+            
           </motion.div>
         </div>
       </section>

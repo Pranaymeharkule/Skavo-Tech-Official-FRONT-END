@@ -33,10 +33,39 @@
   }
 }
 
+
 .card {
   padding: 2em;
 }
 
 .read-the-docs {
   color: #888;
+}
+
+
+@keyframes scroll {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-scroll {
+  display: flex;
+  width: max-content;
+  animation: scroll 35s linear infinite;
+  will-change: transform;
+}
+
+/* Pause on hover (very important UX) */
+.animate-scroll:hover {
+  animation-play-state: paused;
+}
+
+/* Smooth rendering */
+.animate-scroll > * {
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }

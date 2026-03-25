@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
+import api from "../api/axios"; // Your custom axios instance
 import {
   ArrowRight, Mail, Phone, MapPin, Clock, CheckCircle2,
   Send, Calendar, MessageSquare, Briefcase, Users, BookOpen
 } from "lucide-react";
 
+// --- Icons & Reveal Component ---
 const MenuIcon = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
     <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
@@ -27,6 +29,7 @@ function Reveal({ children, delay = 0, y = 28, className = "" }) {
   );
 }
 
+// --- Data Arrays ---
 const INQUIRY_TYPES = [
   { id:"project", icon:Briefcase, label:"Start a Project", desc:"I want to build something" },
   { id:"training", icon:BookOpen, label:"Training Inquiry", desc:"I want to learn or upskill" },
@@ -58,6 +61,7 @@ const NAV = [
   { label:"Contact", href:"/contact" },
 ];
 
+// --- MAIN COMPONENT ---
 export default function ContactPage() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -66,6 +70,9 @@ export default function ContactPage() {
   const [openFaq, setOpenFaq] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({ name:"", email:"", company:"", phone:"", message:"" });
+  
+  // Add loading state
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 40);
@@ -73,10 +80,29 @@ export default function ContactPage() {
     return () => window.removeEventListener("scroll", fn);
   }, []);
 
-  const handleSubmit = (e) => {
+  // --- NEW SUBMISSION LOGIC ---
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // In production: connect to your API / email service
-    setSubmitted(true);
+    setIsSubmitting(true);
+
+    const payload = {
+      ...form,
+      inquiryType,
+      budget: inquiryType === "project" ? budget : undefined
+    };
+
+    try {
+      const response = await api.post("/contacts", payload);
+      
+      if (response.status === 201 || response.status === 200) {
+        setSubmitted(true);
+      }
+    } catch (error) {
+      console.error("Failed to send message:", error);
+      alert(error.response?.data?.message || "Failed to send message. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (e) => {
@@ -110,7 +136,6 @@ export default function ContactPage() {
         .check-anim{animation:checkIn .4s cubic-bezier(.22,1,.36,1) forwards}
       `}</style>
 
-
       {/* HERO */}
       <section className="relative pt-36 pb-12 overflow-hidden bg-[#fdfdff]">
         <div className="absolute inset-0 pointer-events-none">
@@ -121,7 +146,7 @@ export default function ContactPage() {
           <motion.div initial="hidden" animate="visible" variants={{hidden:{opacity:0},visible:{opacity:1,transition:{staggerChildren:.09}}}}>
             <motion.div variants={{hidden:{opacity:0,y:14},visible:{opacity:1,y:0}}} className="flex items-center gap-3 mb-7">
               <div className="h-px w-10 bg-violet-500" />
-              <span className="sans text-violet-600 font-black uppercase tracking-[0.35em] text-sm">Get in Touch</span>
+              <span className="sans text-violet-600 font-black uppercase tracking-[0.35em] text-2xl">Get in Touch</span>
             </motion.div>
             <motion.h1 variants={{hidden:{opacity:0,y:20},visible:{opacity:1,y:0}}} className="serif font-bold text-slate-900 leading-[1.05] tracking-tight mb-5" style={{fontSize:"clamp(3rem,6vw,5.2rem)"}}>
               Let's Build Something<br /><span className="grad italic">Extraordinary.</span>
@@ -234,9 +259,10 @@ export default function ContactPage() {
                           className="input-field" />
                       </div>
 
-                      <button type="submit"
-                        className="sans w-full flex items-center justify-center gap-2.5 px-8 py-4 bg-violet-900 text-white font-bold text-base rounded-2xl hover:bg-fuchsia-700 transition-all hover:scale-[1.02] active:scale-[.98] shadow-lg shadow-violet-200">
-                        Send Message <Send size={16} />
+                      {/* UPDATE BUTTON UI */}
+                      <button type="submit" disabled={isSubmitting}
+                        className="sans w-full flex items-center justify-center gap-2.5 px-8 py-4 bg-violet-900 text-white font-bold text-base rounded-2xl hover:bg-fuchsia-700 transition-all hover:scale-[1.02] active:scale-[.98] shadow-lg shadow-violet-200 disabled:opacity-50 disabled:hover:scale-100">
+                        {isSubmitting ? "Sending..." : "Send Message"} <Send size={16} />
                       </button>
 
                       <p className="sans text-xs text-slate-400 text-center mt-4">
@@ -327,12 +353,12 @@ export default function ContactPage() {
       </section>
 
       {/* FAQ */}
-      <section className="py-24 sm:py-32 bg-white">
+      <section className="py-20 sm:py-20 bg-white">
         <div className="max-w-3xl mx-auto px-5 sm:px-8">
           <Reveal className="text-center mb-14">
             <div className="flex items-center justify-center gap-3 mb-6">
               <div className="h-px w-10 bg-violet-400" />
-              <span className="sans text-violet-600 font-black uppercase tracking-[0.35em] text-sm">FAQ</span>
+              <span className="sans text-violet-600 font-black uppercase tracking-[0.35em] text-2xl">FAQ</span>
               <div className="h-px w-10 bg-violet-400" />
             </div>
             <h2 className="serif font-bold text-slate-900 tracking-tight" style={{fontSize:"clamp(2rem,4vw,3.2rem)"}}>
@@ -392,7 +418,6 @@ export default function ContactPage() {
         </div>
       </section>
 
-      
     </div>
   );
 }

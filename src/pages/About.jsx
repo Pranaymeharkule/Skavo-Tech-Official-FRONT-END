@@ -101,16 +101,9 @@ const STATS = [
 
 const OFFICES = [
   { city: "Nagpur",     country: "Maharashtra, India", type: "Headquarters" },
-  { city: "Navi Mumbai",country: "Maharashtra, India", type: "Development Hub" },
 ];
 
-const NAV = [
-  { label: "Services", href: "#services" },
-  { label: "Our Work", href: "#work"     },
-  { label: "Process",  href: "#process"  },
-  { label: "About",    href: "#about"    },
-  { label: "FAQ",      href: "#faq"      },
-];
+
 
 /* ═══════════════════════════ MAIN ═══════════════════════════ */
 export default function AboutSkavo() {
@@ -295,7 +288,7 @@ export default function AboutSkavo() {
               <div className="flex gap-6 border-b-2 border-violet-100 mb-8">
                 {["mission","vision","story"].map(tab => (
                   <button key={tab} onClick={() => setActiveTab(tab)}
-                    className={`tab-btn sans pb-3 text-sm font-bold uppercase tracking-widest capitalize transition-colors ${
+                    className={`tab-btn sans pb-3 text-base font-bold uppercase tracking-widest capitalize transition-colors ${
                       activeTab===tab ? "active text-violet-900" : "text-slate-400 hover:text-slate-700"
                     }`}>
                     {tab}
@@ -312,11 +305,11 @@ export default function AboutSkavo() {
                       <div className="w-14 h-14 rounded-2xl bg-violet-100 border border-violet-200 flex items-center justify-center mb-6 float-icon">
                         <Target size={26} className="text-violet-700" strokeWidth={1.8} />
                       </div>
-                      <h3 className="serif text-2xl font-bold text-slate-900 mb-4">Our Mission</h3>
-                      <p className="sans text-slate-500 leading-relaxed text-base mb-4">
+                      <h3 className="serif text-3xl font-bold text-slate-900 mb-4">Our Mission</h3>
+                      <p className="sans text-slate-500 leading-relaxed text-lg mb-4">
                         To deliver innovative technology solutions that create real, measurable value for our clients. Through advanced engineering and a customer-focused approach, we help businesses improve efficiency, adopt modern technologies, and grow successfully in the digital world.
                       </p>
-                      <p className="sans text-slate-400 leading-relaxed text-sm">
+                      <p className="sans text-slate-400 leading-relaxed text-base">
                         We don't just build software. We build competitive advantages. Every product we ship is designed to be a business asset — one that compounds in value over time.
                       </p>
                     </div>
@@ -326,11 +319,11 @@ export default function AboutSkavo() {
                       <div className="w-14 h-14 rounded-2xl bg-fuchsia-100 border border-fuchsia-200 flex items-center justify-center mb-6 float-icon">
                         <Eye size={26} className="text-fuchsia-700" strokeWidth={1.8} />
                       </div>
-                      <h3 className="serif text-2xl font-bold text-slate-900 mb-4">Our Vision</h3>
-                      <p className="sans text-slate-500 leading-relaxed text-base mb-4">
+                      <h3 className="serif text-3xl font-bold text-slate-900 mb-4">Our Vision</h3>
+                      <p className="sans text-slate-500 leading-relaxed text-lg mb-4">
                         To become the most trusted technology partner for ambitious businesses across India and beyond — known not just for code quality, but for the tangible business outcomes we deliver.
                       </p>
-                      <p className="sans text-slate-400 leading-relaxed text-sm">
+                      <p className="sans text-slate-400 leading-relaxed text-base">
                         We envision a future where every business — from early-stage startup to enterprise — has access to world-class engineering talent and strategic technology guidance.
                       </p>
                     </div>
@@ -340,11 +333,11 @@ export default function AboutSkavo() {
                       <div className="w-14 h-14 rounded-2xl bg-violet-100 border border-violet-200 flex items-center justify-center mb-6 float-icon">
                         <Lightbulb size={26} className="text-violet-700" strokeWidth={1.8} />
                       </div>
-                      <h3 className="serif text-2xl font-bold text-slate-900 mb-4">How It Started</h3>
-                      <p className="sans text-slate-500 leading-relaxed text-base mb-4">
+                      <h3 className="serif text-3xl font-bold text-slate-900 mb-4">How It Started</h3>
+                      <p className="sans text-slate-500 leading-relaxed text-lg mb-4">
                         Skavo was founded by Sakshi and Saurabh — a developer and a CA — who shared one frustration: businesses deserved better than overpriced agencies that disappeared after launch.
                       </p>
-                      <p className="sans text-slate-400 leading-relaxed text-sm">
+                      <p className="sans text-slate-400 leading-relaxed text-base">
                         From Nagpur, we started with a single client and a relentless focus on outcomes. Eight years later, we've grown to 60+ people across two cities, shipping products used by thousands worldwide.
                       </p>
                     </div>
@@ -364,10 +357,10 @@ export default function AboutSkavo() {
                         style={{ background:"linear-gradient(135deg,#7c3aed,#c026d3)" }} />
                       <div className="relative p-6 rounded-[1.5rem] bg-white border border-black group-hover:border-transparent group-hover:shadow-[0_20px_48px_rgba(124,58,237,0.12)] group-hover:-translate-y-1 transition-all duration-400 h-full">
                         <div className="w-11 h-11 rounded-xl bg-violet-50 border border-violet-100 flex items-center justify-center mb-4 group-hover:bg-violet-900 transition-all duration-400">
-                          <Icon size={20} className="text-violet-600 group-hover:text-white transition-colors" strokeWidth={1.8} />
+                          <Icon size={22} className="text-violet-600 group-hover:text-white transition-colors" strokeWidth={1.8} />
                         </div>
-                        <h4 className="serif text-base font-bold text-slate-900 mb-2 group-hover:text-violet-800 transition-colors">{v.title}</h4>
-                        <p className="sans text-xs text-slate-400 leading-relaxed group-hover:text-slate-600 transition-colors">{v.desc}</p>
+                        <h4 className="serif text-lg font-bold text-slate-900 mb-2 group-hover:text-violet-800 transition-colors">{v.title}</h4>
+                        <p className="sans text-sm text-black leading-relaxed group-hover:text-slate-600 transition-colors">{v.desc}</p>
                       </div>
                     </div>
                   </Reveal>
@@ -380,7 +373,7 @@ export default function AboutSkavo() {
 
      
       {/* ══════ SERVICES ══════ */}
-      <section className="py-24 sm:py-32 bg-[#fdfdff] relative overflow-hidden">
+      <section className="py-20 sm:py-10 bg-[#fdfdff] relative overflow-hidden">
         <div className="absolute top-0 right-0 w-[480px] h-[480px] bg-violet-100/50 blur-[120px] pointer-events-none opacity-60" />
 
         <div className="max-w-7xl mx-auto px-5 sm:px-8 relative z-10">
@@ -468,7 +461,7 @@ export default function AboutSkavo() {
                     viewport={{ once:true }}
                     className="group flex items-start gap-4 p-5 rounded-2xl border border-black hover:border-violet-300 hover:bg-violet-50/60 transition-all cursor-default">
                     <CheckCircle2 size={18} className="text-violet-600 mt-0.5 flex-shrink-0 group-hover:text-fuchsia-600 transition-colors" />
-                    <span className="sans text-sm text-slate-600 leading-relaxed group-hover:text-slate-900 transition-colors">{item}</span>
+                    <span className="sans text-base text-slate-600 leading-relaxed group-hover:text-slate-900 transition-colors">{item}</span>
                   </motion.div>
                 ))}
               </div>
@@ -478,7 +471,7 @@ export default function AboutSkavo() {
       </section>
 
       {/* ══════ SKILLS / EXPERTISE BAR ══════ */}
-      <section className="py-24 sm:py-32 bg-[#fdfdff] relative overflow-hidden">
+      <section className="py-20 sm:py-10 bg-[#fdfdff] relative overflow-hidden">
         <div className="absolute bottom-0 left-0 w-[480px] h-[480px] bg-fuchsia-100/40 blur-[120px] pointer-events-none opacity-60" />
         <div className="max-w-7xl mx-auto px-5 sm:px-8 relative z-10">
 
@@ -489,7 +482,7 @@ export default function AboutSkavo() {
               <div className="h-px w-10 bg-fuchsia-400" />
             </div>
             <h2 className="serif font-bold text-slate-900 tracking-tight"
-              style={{ fontSize:"clamp(2rem,4vw,3.2rem)" }}>
+              style={{ fontSize:"clamp(2.2rem,6vw,4rem)" }}>
               Where We Excel
             </h2>
           </Reveal>
@@ -499,7 +492,7 @@ export default function AboutSkavo() {
               { label: "Custom Web Development",        pct: 90, color: "#6d28d9" },
               { label: "Mobile App Development",        pct: 70, color: "#7c3aed" },
               { label: "AI & Automation Solutions",     pct: 75, color: "#a855f7" },
-              { label: "Digital Marketing",             pct: 65, color: "#c026d3" },
+              { label: "Digital Marketing",             pct: 90, color: "#c026d3" },
               { label: "Cloud & DevOps",                pct: 80, color: "#4c1d95" },
               { label: "Graphic & UI/UX Design",        pct: 55, color: "#9333ea" },
             ].map((skill, i) => (
@@ -525,7 +518,7 @@ export default function AboutSkavo() {
               
 
               <h2 className="serif font-bold text-white tracking-tight leading-[1.05] mb-7"
-                style={{ fontSize:"clamp(2.4rem,6vw,5rem)" }}>
+                style={{ fontSize:"clamp(2.2rem,6vw,4rem)" }}>
                 Let's Build Something<br />
                 <span className="italic text-fuchsia-200">Extraordinary Together.</span>
               </h2>

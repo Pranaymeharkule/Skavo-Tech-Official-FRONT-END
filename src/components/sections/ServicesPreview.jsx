@@ -103,10 +103,42 @@ const SERVICES = [
 ];
 
 const PROCESS = [
-  { icon:Search, title:"Discovery", desc:"We study your business, users, and goals before writing a single line of code. We ask the hard questions." },
-  { icon:PenTool, title:"Design & Plan", desc:"You see exactly what we're building — real designs, real architecture — before we start. No surprises." },
-  { icon:Code2, title:"Build & Ship", desc:"Two-week sprints. Live staging. Weekly demos. You're in full control at every step of the build." },
-  { icon:Rocket, title:"Launch & Grow", desc:"We go live with you and stay for 90 days. If anything breaks, we fix it — immediately, no extra charge." },
+  { 
+    step: "01",
+    icon: Search, 
+    title: "Discovery", 
+    desc: "We study your business, users, and goals before writing a single line of code. We ask the hard questions.",
+    color: "#7c3aed", // violet-600
+    bg: "#f5f3ff",    // violet-50
+    bullets: ["Stakeholder interviews", "Competitor analysis", "Technical scoping"]
+  },
+  { 
+    step: "02",
+    icon: PenTool, 
+    title: "Design & Plan", 
+    desc: "You see exactly what we're building — real designs, real architecture — before we start. No surprises.",
+    color: "#c026d3", // fuchsia-600
+    bg: "#fdf4ff",    // fuchsia-50
+    bullets: ["High-fidelity UI/UX", "System architecture", "Sprint roadmapping"]
+  },
+  { 
+    step: "03",
+    icon: Code2, 
+    title: "Build & Ship", 
+    desc: "Two-week sprints. Live staging. Weekly demos. You're in full control at every step of the build.",
+    color: "#4c1d95", // violet-900
+    bg: "#ede9fe",    // violet-100
+    bullets: ["Agile development", "Automated QA testing", "Continuous deployment"]
+  },
+  { 
+    step: "04",
+    icon: Rocket, 
+    title: "Launch & Grow", 
+    desc: "We go live with you and stay for 90 days. If anything breaks, we fix it — immediately, no extra charge.",
+    color: "#a855f7", // purple-500
+    bg: "#faf5ff",    // purple-50
+    bullets: ["Zero-downtime launch", "Performance monitoring", "90-day bug warranty"]
+  },
 ];
 
 const NAV = [
@@ -145,32 +177,52 @@ export default function ServicesPage() {
 
      
 
-      {/* HERO */}
-      <section className="relative pt-36 pb-20 overflow-hidden bg-[#fdfdff]">
+      {/* RESTORED PREMIUM HERO (Original Colors) */}
+      <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden bg-[#fdfdff] py-20">
+        
+        {/* ENHANCED BACKGROUND: Subtle grid pattern alongside the blur circles */}
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[-8%] left-[-4%] w-[55%] h-[55%] rounded-full bg-violet-100/60 blur-[110px]" />
-          <div className="absolute bottom-[5%] right-[-4%] w-[45%] h-[50%] rounded-full bg-fuchsia-100/50 blur-[110px]" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+          
+          <div className="absolute top-[-10%] left-[-5%] w-[60%] h-[60%] rounded-full bg-violet-200/40 blur-[120px]" />
+          <div className="absolute bottom-[-10%] right-[-5%] w-[50%] h-[50%] rounded-full bg-fuchsia-200/40 blur-[120px]" />
         </div>
-        <div className="max-w-7xl mx-auto px-5 sm:px-8 relative z-10">
-          <motion.div initial="hidden" animate="visible" variants={{hidden:{opacity:0},visible:{opacity:1,transition:{staggerChildren:.09}}}}>
-            <motion.div variants={{hidden:{opacity:0,y:14},visible:{opacity:1,y:0}}} className="flex items-center gap-3 mb-7">
-              <div className="h-px w-10 bg-violet-500" />
-              <span className="sans text-violet-600 font-black uppercase tracking-[0.35em] text-[25px]">What We Build</span>
-            </motion.div>
-            <motion.h1 variants={{hidden:{opacity:0,y:20},visible:{opacity:1,y:0}}} className="serif font-bold text-slate-900 leading-[1.05] tracking-tight mb-7" style={{fontSize:"clamp(3rem,6vw,5.2rem)"}}>
-              Eight Ways We Help<br /><span className="grad italic">Businesses Grow.</span>
+        
+        <div className="w-full max-w-7xl mx-auto px-5 sm:px-8 relative z-10 flex flex-col items-center text-center">
+          
+          <motion.div initial="hidden" animate="visible" variants={{hidden:{opacity:0},visible:{opacity:1,transition:{staggerChildren:0.15}}}} className="flex flex-col items-center text-center">
+            
+          {/* Added justify-center and a second line on the right side for perfect symmetry */}
+                     <motion.div variants={{hidden:{opacity:0,y:14},visible:{opacity:1,y:0}}} className="flex items-center justify-center gap-3 mb-7">
+                       <div className="h-px w-10 bg-violet-500" />
+                       <span className="sans text-violet-600 font-black uppercase tracking-[0.35em] text-[25px]">What We Build</span>
+                       <div className="h-px w-10 bg-violet-500" /> {/* Added right line */}
+                     </motion.div>
+            
+            {/* RESTORED HEADING: Using your original .grad class instead of the custom Tailwind one */}
+            <motion.h1 variants={{hidden:{opacity:0,y:20},visible:{opacity:1,y:0}}} className="serif font-extrabold text-slate-900 leading-[1.05] tracking-tight mb-8 mx-auto drop-shadow-sm" style={{fontSize:"clamp(3.5rem,7vw,5.5rem)"}}>
+              Eight Ways We Help<br />
+              <span className="grad italic pr-2">
+                Businesses Grow.
+              </span>
             </motion.h1>
-            <motion.p variants={{hidden:{opacity:0,y:18},visible:{opacity:1,y:0}}} className="sans text-lg text-slate-500 leading-relaxed max-w-xl mb-10">
+            
+            {/* RESTORED PARAGRAPH: Back to text-slate-800 for the strong tag */}
+            <motion.p variants={{hidden:{opacity:0,y:20},visible:{opacity:1,y:0}}} className="sans text-lg sm:text-xl text-slate-500 leading-relaxed max-w-2xl mb-10 mx-auto font-medium">
               From MVP to enterprise scale. Every capability you need to <strong className="text-slate-800">build, market, and grow</strong> your digital product — under one roof.
             </motion.p>
-            <motion.div variants={{hidden:{opacity:0},visible:{opacity:1}}} className="flex flex-wrap gap-4">
-              <a href="#services" className="sans flex items-center gap-2.5 px-8 py-4 bg-slate-900 text-white font-semibold text-sm rounded-2xl hover:bg-violet-800 transition-all shadow-xl shadow-slate-200 hover:scale-105 active:scale-95 group">
-                Explore Services <span className="group-hover:translate-x-1 transition-transform"><ArrowRight size={16}/></span>
+            
+            {/* UPGRADED BUTTONS: Fully rounded (pill), added hover lift */}
+            <motion.div variants={{hidden:{opacity:0,y:20},visible:{opacity:1,y:0}}} className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full sm:w-auto">
+              <a href="#services" className="sans flex items-center justify-center gap-2.5 w-full sm:w-auto px-8 py-4 bg-slate-900 text-white font-semibold text-base rounded-full hover:bg-slate-800 transition-all duration-300 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_30px_rgba(139,92,246,0.3)] hover:-translate-y-1 active:translate-y-0 group">
+                Explore Services 
+                <span className="group-hover:translate-x-1 transition-transform duration-300"><ArrowRight size={18}/></span>
               </a>
-              <a href="/contact" className="sans flex items-center gap-2.5 px-8 py-4 bg-white text-slate-800 font-semibold text-sm rounded-2xl border border-slate-200 hover:border-violet-300 hover:bg-violet-50 transition-all">
+              <a href="/contact" className="sans flex items-center justify-center gap-2.5 w-full sm:w-auto px-8 py-4 bg-white text-slate-800 font-semibold text-base rounded-full border border-slate-200 hover:border-violet-200 hover:bg-violet-50/50 transition-all duration-300 hover:-translate-y-1 active:translate-y-0 shadow-sm">
                 Book Free Consultation
               </a>
             </motion.div>
+            
           </motion.div>
         </div>
       </section>
@@ -279,42 +331,84 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* PROCESS */}
-      <section className="py-24 sm:py-32 bg-white">
-        <div className="max-w-7xl mx-auto px-5 sm:px-8">
-          <Reveal className="text-center mb-20">
-            <div className="flex items-center justify-center gap-3 mb-6">
-              <div className="h-px w-10 bg-violet-400" /><span className="sans text-violet-600 font-black uppercase tracking-[0.35em] text-[25px]">How We Work</span>
-              <div className="h-px w-10 bg-violet-400" />
-            </div>
-            <h2 className="serif font-bold text-slate-900 tracking-tight leading-[1.07]" style={{fontSize:"clamp(2.4rem,4.8vw,4rem)"}}>
-              From Idea to <span className="grad italic">Live Product.</span>
-            </h2>
-          </Reveal>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {PROCESS.map((p, i) => {
-              const Icon = p.icon;
-              return (
-                <Reveal key={i} delay={i*0.1}>
-                  <div className="group relative">
-                    <div className="w-12 h-12 rounded-2xl bg-white border-2 border-black flex items-center justify-center mb-7 group-hover:bg-black group-hover:text-white group-hover:shadow-[0_10px_25px_rgba(0,0,0,.25)] transition-all duration-300">
-                      <span className="text-xs font-black text-black group-hover:text-white transition">0{i+1}</span>
-                    </div>
-                    <div className="relative p-8 rounded-[2rem] bg-white border-2 border-black h-full group-hover:-translate-y-2 group-hover:shadow-[0_25px_60px_rgba(0,0,0,.15)] transition-all duration-300">
-                      <div className="absolute inset-0 rounded-[2rem] opacity-0 group-hover:opacity-100 transition duration-300 bg-gradient-to-br from-violet-200/40 via-transparent to-indigo-200/40 blur-xl -z-10" />
-                      <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center mb-6 border border-black group-hover:bg-black float-icon transition-all duration-300">
-                        <Icon size={22} className="text-black group-hover:text-white transition" strokeWidth={1.8} />
-                      </div>
-                      <h3 className="text-xl font-bold text-black mb-3 group-hover:text-violet-700 transition serif">{p.title}</h3>
-                      <p className="text-gray-600 text-sm leading-relaxed sans">{p.desc}</p>
-                    </div>
-                  </div>
-                </Reveal>
-              );
-            })}
-          </div>
-        </div>
-      </section>
+     {/* ════════ PROCESS ════════ */}
+           <section id="process" className="py-20 sm:py-28 bg-[#fdfdff] relative overflow-hidden">
+             <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-violet-100/40 blur-[120px] pointer-events-none" />
+             <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-fuchsia-100/30 blur-[120px] pointer-events-none" />
+     
+             <div className="max-w-7xl mx-auto px-5 sm:px-8 relative z-10">
+     
+               {/* Centered heading */}
+               <Reveal className="mb-16 sm:mb-20">
+                 <div className="flex flex-col items-center text-center">
+                   <div className="flex items-center gap-3 mb-5 justify-center">
+                     <div className="h-px w-10 bg-violet-400" />
+                     <span className="sans text-violet-600 font-black uppercase tracking-[0.3em] text-sm sm:text-2xl">How We Work</span>
+                     <div className="h-px w-10 bg-violet-400" />
+                   </div>
+                   <h2 className="serif font-bold text-slate-900 leading-tight"
+                     style={{ fontSize:"clamp(2.2rem,4.8vw,4rem)" }}>
+                     From Idea to <span className="grad italic">Live Product.</span>
+                   </h2>
+                   <p className="sans text-slate-500 mt-5 max-w-2xl text-base sm:text-lg leading-relaxed">
+                     A battle-tested playbook across 200+ products. No confusion — you always know exactly what's happening and what comes next.
+                   </p>
+                 </div>
+               </Reveal>
+     
+               {/* Process Cards — 4 columns, proper cards */}
+               <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                 {PROCESS.map((p, i) => {
+                   const Icon = p.icon;
+                   return (
+                     <Reveal key={i} delay={i * 0.1}>
+                       <div className="process-card relative flex flex-col h-full rounded-[2rem] bg-white border border-black p-7 sm:p-8 overflow-hidden">
+                         {/* Top accent */}
+                         <div className="absolute top-0 left-0 right-0 h-1 rounded-t-[2rem]"
+                           style={{ background:`linear-gradient(90deg,${p.color},#c026d3)` }} />
+     
+                         {/* Step + icon row */}
+                         <div className="flex items-center justify-between mb-7">
+                           <span className="sans text-[13px] font-black uppercase tracking-[0.25em] text-black">Step {p.step}</span>
+                           <div className="w-12 h-12 rounded-2xl flex items-center justify-center"
+                             style={{ backgroundColor:p.bg, border:`1.5px solid ${p.color}30` }}>
+                             <Icon size={22} style={{ color:p.color }} strokeWidth={2} />
+                           </div>
+                         </div>
+     
+                         {/* Title */}
+                         <h3 className="serif text-2xl font-bold text-slate-900 mb-3 leading-snug">{p.title}</h3>
+     
+                         {/* Description */}
+                         <p className="sans text-base text-black leading-relaxed mb-7">{p.desc}</p>
+     
+                         {/* Checkpoints */}
+                         <ul className="mt-auto space-y-2.5">
+                           {p.bullets.map((b, j) => (
+                             <li key={j} className="flex items-start gap-2.5">
+                               <CheckCircle2 size={15} className="flex-shrink-0 mt-0.5" style={{ color:p.color }} strokeWidth={2.5} />
+                               <span className="sans text-sm font-medium text-slate-600">{b}</span>
+                             </li>
+                           ))}
+                         </ul>
+     
+                         {/* Connector arrow — desktop only */}
+                         {i < PROCESS.length - 1 && (
+                           <div className="hidden lg:flex absolute -right-3.5 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-white border border-violet-200 items-center justify-center shadow-sm">
+                             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                               <polyline points="9 18 15 12 9 6"/>
+                             </svg>
+                           </div>
+                         )}
+                       </div>
+                     </Reveal>
+                   );
+                 })}
+               </div>
+     
+       
+             </div>
+           </section>
 
       {/* CTA */}
       <section className="py-16 px-4 sm:px-8">
