@@ -1,161 +1,127 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Plus, Download, X, Mail, Briefcase,
-  Clock, Star, ChevronRight, Check, XCircle, MessageSquare
-} from "lucide-react";
+import api from "../../api/axios";
+import { X, Mail, Briefcase, Star, Trash2, ExternalLink, Clock } from "lucide-react";
 import {
   Reveal, StatusBadge, Avatar, ProgressBar, SearchBar,
-  PageHeader, PrimaryBtn, GhostBtn, PillFilter, RowActions, StatCard, Table
+  PageHeader, PrimaryBtn, PillFilter, Table, Pagination,
+  EmptyState, TableSkeleton, ConfirmDialog, Toast, InfoRow, MessageBox
 } from "./adminUI";
 
-/* ── Mock / API placeholder ── */
-const MOCK_APPLICATIONS = [
-  { id: 1, name: "Alex Turner",     role: "Senior React Developer",  email: "alex@gmail.com",       experience: "6 yrs", status: "interview", applied: "2025-03-14", score: 92, phone: "+1 555-0191", portfolio: "alexturner.dev",    notes: "Strong system design. Cleared technical round." },
-  { id: 2, name: "Zoe Martinez",    role: "UI/UX Designer",          email: "zoe@outlook.com",      experience: "4 yrs", status: "review",    applied: "2025-03-13", score: 87, phone: "+1 555-0182", portfolio: "zoecreates.io",     notes: "Impressive Figma portfolio. Design challenge pending." },
-  { id: 3, name: "Kwame Asante",    role: "DevOps Engineer",         email: "kwame@proton.me",      experience: "5 yrs", status: "rejected",  applied: "2025-03-10", score: 61, phone: "+233 50 123 4567", portfolio: "github.com/kwame", notes: "Lacks Kubernetes experience required for this role." },
-  { id: 4, name: "Nina Volkova",    role: "AI/ML Engineer",          email: "nina@gmail.com",       experience: "7 yrs", status: "offer",     applied: "2025-03-09", score: 97, phone: "+7 999 123 4567",  portfolio: "ninavolkova.ai",    notes: "Outstanding. Offer letter sent. Awaiting response." },
-  { id: 5, name: "Tyler Brooks",    role: "Backend Engineer",        email: "tyler@yahoo.com",      experience: "3 yrs", status: "review",    applied: "2025-03-12", score: 74, phone: "+1 555-0173", portfolio: "github.com/tylerb",  notes: "Solid Node.js skills. Needs second look at system design." },
-  { id: 6, name: "Amara Diallo",    role: "Project Manager",         email: "amara@gmail.com",      experience: "8 yrs", status: "interview", applied: "2025-03-11", score: 89, phone: "+221 77 123 4567", portfolio: "linkedin.com/amara", notes: "PMP certified. Strong SaaS delivery background." },
-  { id: 7, name: "Ji-woo Park",     role: "Senior React Developer",  email: "jiwoo@kakao.com",      experience: "5 yrs", status: "review",    applied: "2025-03-15", score: 81, phone: "+82 10 1234 5678",  portfolio: "jiwoopark.kr",      notes: "Excellent Next.js knowledge. Culture fit interview scheduled." },
-  { id: 8, name: "Fatima Al-Rashid",role: "Product Designer",        email: "fatima@design.ae",     experience: "6 yrs", status: "interview", applied: "2025-03-13", score: 93, phone: "+971 55 123 4567",  portfolio: "fatima.design",     notes: "Top candidate. Design system experience is rare." },
-];
+const STAGES = ["Applied","Reviewing","Interviewing","Hired","Rejected"];
+const PER_PAGE = 8;
 
-const PIPELINE_STAGES = ["review", "interview", "offer", "rejected"];
-
-const SCORE_COLOR = (s) =>
-  s >= 90 ? "#16a34a" : s >= 75 ? "#d97706" : s >= 60 ? "#ea580c" : "#dc2626";
-
-/* ── Candidate Detail Modal ── */
-function CandidateModal({ candidate, onClose }) {
+/* ── Candidate Modal ── */
+function CandidateModal({ candidate, onClose, onUpdateStatus, onDelete }) {
+  const fmt = d => new Date(d).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"});
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
-      onClick={onClose}
-    >
-      <motion.div
-        initial={{ opacity: 0, scale: 0.94, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.94, y: 20 }}
-        transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-        className="bg-white rounded-3xl border-2 border-black w-full max-w-md p-8 relative"
-        onClick={e => e.stopPropagation()}
-      >
-        <button onClick={onClose} className="absolute top-5 right-5 w-8 h-8 rounded-xl border border-black flex items-center justify-center text-gray-400 hover:bg-gray-50 transition-colors">
-          <X size={14} />
-        </button>
+    <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <motion.div initial={{opacity:0,scale:.96,y:12}} animate={{opacity:1,scale:1,y:0}} exit={{opacity:0,scale:.96,y:12}}
+        transition={{duration:.22}} onClick={e=>e.stopPropagation()}
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-md border border-gray-100 overflow-y-auto max-h-[90vh]">
 
-        <div className="flex items-center gap-4 mb-6">
-          <Avatar name={candidate.name} size="lg" />
-          <div>
-            <h3 className="font-bold text-slate-900 text-lg" style={{ fontFamily: "'Fraunces',serif" }}>
-              {candidate.name}
-            </h3>
-            <p className="text-sm text-gray-500">{candidate.role}</p>
-            <div className="mt-1.5"><StatusBadge status={candidate.status} /></div>
-          </div>
-        </div>
-
-        {/* Score */}
-        <div className="mb-5 p-4 rounded-2xl border-2 border-black bg-[#fdfdff]">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-xs font-black text-gray-500 uppercase tracking-widest">Match Score</p>
-            <span className="font-bold text-2xl" style={{ fontFamily: "'Fraunces',serif", color: SCORE_COLOR(candidate.score) }}>
-              {candidate.score}/100
-            </span>
-          </div>
-          <ProgressBar value={candidate.score} color={SCORE_COLOR(candidate.score)} />
-        </div>
-
-        {/* Contact */}
-        <div className="space-y-2 mb-5">
-          {[
-            { icon: Mail,      label: "Email",     val: candidate.email     },
-            { icon: Briefcase, label: "Portfolio", val: candidate.portfolio },
-            { icon: Clock,     label: "Applied",   val: candidate.applied   },
-            { icon: Star,      label: "Experience",val: candidate.experience},
-          ].map(({ icon: Icon, label, val }) => (
-            <div key={label} className="flex items-center gap-3 text-sm">
-              <div className="w-8 h-8 rounded-lg bg-violet-50 border border-violet-100 flex items-center justify-center flex-shrink-0">
-                <Icon size={13} className="text-violet-600" />
-              </div>
-              <div>
-                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wide leading-none mb-0.5">{label}</p>
-                <p className="text-slate-800 font-medium text-sm">{val}</p>
-              </div>
+        {/* Header bar */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 sticky top-0 bg-white z-10">
+          <div className="flex items-center gap-3">
+            <Avatar name={candidate.name} size="lg"/>
+            <div>
+              <p className="font-bold text-gray-900 text-base leading-tight">{candidate.name}</p>
+              <p className="text-xs text-violet-600 font-semibold">{candidate.position}
+                <span className="text-gray-400 font-normal ml-1">({candidate.type})</span>
+              </p>
             </div>
-          ))}
+          </div>
+          <button onClick={onClose} className="w-8 h-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-400 hover:bg-gray-50 transition-colors flex-shrink-0">
+            <X size={14}/>
+          </button>
         </div>
 
-        {/* Notes */}
-        <div className="p-4 rounded-2xl bg-violet-50 border border-violet-100 mb-6">
-          <p className="text-[10px] font-black text-violet-500 uppercase tracking-widest mb-1.5 flex items-center gap-1">
-            <MessageSquare size={10} /> Recruiter Notes
-          </p>
-          <p className="text-sm text-slate-700 leading-relaxed">{candidate.notes}</p>
-        </div>
+        <div className="p-6 space-y-4">
+          {/* Status */}
+          <div className="flex items-center gap-2">
+            <StatusBadge status={candidate.status||"Applied"}/>
+            <span className="text-xs text-gray-400">{fmt(candidate.createdAt)}</span>
+          </div>
 
-        {/* Actions */}
-        <div className="flex gap-2">
-          <button className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-xl hover:bg-violet-800 transition-colors">
-            <Check size={14} /> Move to Offer
-          </button>
-          <button className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-white text-red-500 text-sm font-bold rounded-xl border-2 border-black hover:bg-red-50 transition-colors">
-            <XCircle size={14} /> Reject
-          </button>
+          {/* Info */}
+          <div className="p-4 rounded-xl bg-gray-50 border border-gray-100 space-y-2.5">
+            <InfoRow icon={Mail}      label="Email"   value={candidate.email}/>
+            <InfoRow icon={Briefcase} label="College" value={candidate.college||"N/A"}/>
+            <InfoRow icon={Star}      label="Course"  value={candidate.course||"N/A"}/>
+            <InfoRow icon={Clock}     label="Applied" value={fmt(candidate.createdAt)}/>
+          </div>
+
+          {/* Resume */}
+          {candidate.resume && (
+            <a href={candidate.resume} target="_blank" rel="noreferrer"
+              className="flex items-center justify-center gap-2 w-full py-3 bg-violet-700 text-white text-sm font-bold rounded-xl hover:bg-violet-800 transition-colors">
+              View Resume <ExternalLink size={14}/>
+            </a>
+          )}
+
+          {/* Actions */}
+          <div className="flex gap-3 pt-1">
+            <select value={candidate.status||"Applied"} onChange={e=>onUpdateStatus(candidate._id,e.target.value)}
+              className="flex-1 p-2.5 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 outline-none hover:border-violet-300 focus:border-violet-500 cursor-pointer transition-colors">
+              {STAGES.map(s=><option key={s} value={s}>{s}</option>)}
+            </select>
+            <button onClick={()=>onDelete(candidate._id)}
+              className="px-4 flex items-center gap-2 text-red-500 rounded-xl border border-gray-200 hover:bg-red-50 hover:border-red-200 transition-colors text-sm font-semibold">
+              <Trash2 size={14}/> Delete
+            </button>
+          </div>
         </div>
       </motion.div>
     </motion.div>
   );
 }
 
-/* ── Stage Column (Kanban) ── */
-function StageColumn({ stage, candidates }) {
-  const stageLabel = { review: "In Review", interview: "Interview", offer: "Offer", rejected: "Rejected" };
-  const stageBg    = { review: "#fffbeb", interview: "#f5f3ff", offer: "#f0fdf4", rejected: "#fef2f2" };
-
+/* ── Kanban Card ── */
+function KanbanCard({ c, onClick }) {
+  const fmt = d => new Date(d).toLocaleDateString("en-IN",{day:"numeric",month:"short"});
   return (
-    <div className="flex-1 min-w-[220px]">
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <span className="font-black text-[10px] uppercase tracking-widest text-gray-500">{stageLabel[stage]}</span>
-          <span className="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">{candidates.length}</span>
+    <motion.div layout initial={{opacity:0,y:10}} animate={{opacity:1,y:0}}
+      onClick={()=>onClick(c)}
+      className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 hover:-translate-y-0.5 hover:shadow-md hover:border-violet-200 transition-all cursor-pointer">
+      <div className="flex items-center gap-2.5 mb-3">
+        <Avatar name={c.name} size="sm"/>
+        <div className="flex-1 min-w-0">
+          <p className="font-bold text-gray-900 text-sm truncate">{c.name}</p>
+          <p className="text-[10px] text-violet-600 font-bold uppercase tracking-wider truncate">{c.type}</p>
         </div>
       </div>
-      <div className="space-y-3">
-        {candidates.map((c, i) => (
-          <motion.div
-            key={c.id}
-            layout
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.05 }}
-            className="bg-white rounded-2xl border-2 border-black p-4 hover:-translate-y-0.5 hover:shadow-md hover:shadow-violet-100 transition-all duration-200 cursor-pointer"
-          >
-            <div className="flex items-center gap-2 mb-3">
-              <Avatar name={c.name} size="sm" />
-              <div className="flex-1 min-w-0">
-                <p className="font-bold text-slate-900 text-xs truncate">{c.name}</p>
-                <p className="text-[10px] text-gray-400 truncate">{c.role}</p>
-              </div>
-            </div>
-            <div className="flex items-center justify-between text-[10px] text-gray-500 mb-2">
-              <span>{c.experience}</span>
-              <span>{c.applied}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex-1 mr-2">
-                <ProgressBar value={c.score} color={SCORE_COLOR(c.score)} />
-              </div>
-              <span className="font-bold text-xs" style={{ color: SCORE_COLOR(c.score) }}>{c.score}</span>
-            </div>
-          </motion.div>
-        ))}
-        {candidates.length === 0 && (
-          <div className="rounded-2xl border-2 border-dashed border-gray-200 p-6 text-center text-gray-300 text-xs font-medium">
+      <p className="text-xs text-gray-600 font-medium mb-3 truncate">{c.position}</p>
+      <div className="flex items-center justify-between text-[10px] text-gray-400 border-t border-gray-50 pt-2">
+        <span className="truncate max-w-[120px]">{c.college||"No college"}</span>
+        <span className="flex items-center gap-1 flex-shrink-0"><Clock size={9}/>{fmt(c.createdAt)}</span>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ── Kanban Column ── */
+function KanbanCol({ stage, candidates, onClick }) {
+  const LANE = {
+    Applied:"bg-gray-50 border-gray-200", Reviewing:"bg-blue-50/50 border-blue-100",
+    Interviewing:"bg-amber-50/50 border-amber-100", Hired:"bg-green-50/50 border-green-100",
+    Rejected:"bg-red-50/50 border-red-100",
+  };
+  const COUNT_BG = {
+    Applied:"bg-gray-200 text-gray-700", Reviewing:"bg-blue-200 text-blue-800",
+    Interviewing:"bg-amber-200 text-amber-800", Hired:"bg-green-200 text-green-800",
+    Rejected:"bg-red-200 text-red-800",
+  };
+  return (
+    <div className={`flex-shrink-0 w-[272px] p-3 rounded-2xl border ${LANE[stage]}`}>
+      <div className="flex items-center justify-between mb-3 px-1">
+        <h4 className="font-bold text-sm text-gray-700">{stage}</h4>
+        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${COUNT_BG[stage]}`}>{candidates.length}</span>
+      </div>
+      <div className="space-y-2.5">
+        {candidates.map(c=><KanbanCard key={c._id} c={c} onClick={onClick}/>)}
+        {candidates.length===0 && (
+          <div className="rounded-xl border border-dashed border-gray-300 bg-white/60 p-5 text-center text-gray-400 text-xs font-medium">
             No candidates
           </div>
         )}
@@ -164,115 +130,156 @@ function StageColumn({ stage, candidates }) {
   );
 }
 
-/* ── Main Page ── */
+/* ── Main ── */
 export default function AdminApplications() {
-  const [apps, setApps] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [view, setView] = useState("kanban");
-  const [search, setSearch] = useState("");
+  const [apps,     setApps]     = useState([]);
+  const [loading,  setLoading]  = useState(true);
+  const [view,     setView]     = useState("kanban");
+  const [search,   setSearch]   = useState("");
   const [selected, setSelected] = useState(null);
+  const [delId,    setDelId]    = useState(null);
+  const [toast,    setToast]    = useState(null);
+  const [page,     setPage]     = useState(1);
 
-  useEffect(() => {
-    const t = setTimeout(() => { setApps(MOCK_APPLICATIONS); setLoading(false); }, 600);
-    return () => clearTimeout(t);
-  }, []);
+  const showToast = (msg, type="success") => { setToast({msg,type}); setTimeout(()=>setToast(null),3000); };
+
+  const fetchApps = async () => {
+    try {
+      const r = await api.get("/careers");
+      setApps(r.data.map(a=>({...a, status:a.status||"Applied"})));
+    } catch(e) { console.error(e); } finally { setLoading(false); }
+  };
+
+  useEffect(()=>{ fetchApps(); },[]);
+
+  const handleUpdateStatus = async (id, status) => {
+    try {
+      await api.put(`/careers/${id}`, { status });
+      setApps(p=>p.map(a=>a._id===id?{...a,status}:a));
+      if (selected?._id===id) setSelected(s=>({...s,status}));
+      showToast("Status updated");
+    } catch { showToast("Failed to update","error"); }
+  };
+
+  const confirmDelete = async () => {
+    try {
+      await api.delete(`/careers/${delId}`);
+      setApps(p=>p.filter(a=>a._id!==delId));
+      if (selected?._id===delId) setSelected(null);
+      setDelId(null); showToast("Application deleted");
+    } catch { showToast("Failed to delete","error"); }
+  };
 
   const filtered = apps.filter(a =>
     a.name.toLowerCase().includes(search.toLowerCase()) ||
-    a.role.toLowerCase().includes(search.toLowerCase())
+    (a.position||"").toLowerCase().includes(search.toLowerCase())
   );
 
-  const byStage = (stage) => filtered.filter(a => a.status === stage);
+  // Table pagination
+  const totalPages = Math.ceil(filtered.length/PER_PAGE);
+  const pageSlice  = filtered.slice((page-1)*PER_PAGE, page*PER_PAGE);
 
-  const summaryStats = [
-    { label: "Total",     value: apps.length,                                            color: "#7c3aed" },
-    { label: "In Review", value: apps.filter(a => a.status === "review").length,         color: "#d97706" },
-    { label: "Interview", value: apps.filter(a => a.status === "interview").length,      color: "#7c3aed" },
-    { label: "Offers",    value: apps.filter(a => a.status === "offer").length,          color: "#16a34a" },
-    { label: "Rejected",  value: apps.filter(a => a.status === "rejected").length,       color: "#dc2626" },
-    { label: "Avg Score", value: apps.length ? Math.round(apps.reduce((s,a)=>s+a.score,0)/apps.length) : 0, color: "#a855f7" },
+  const byStage = s => filtered.filter(a=>a.status===s);
+
+  const FMT = d => new Date(d).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"});
+
+  const SUMMARY = [
+    { label:"Total",       value:apps.length,                                    color:"#7c3aed" },
+    { label:"Applied",     value:apps.filter(a=>a.status==="Applied").length,    color:"#64748b" },
+    { label:"Reviewing",   value:apps.filter(a=>a.status==="Reviewing").length,  color:"#2563eb" },
+    { label:"Interviewing",value:apps.filter(a=>a.status==="Interviewing").length,color:"#d97706"},
+    { label:"Hired",       value:apps.filter(a=>a.status==="Hired").length,      color:"#16a34a" },
+    { label:"Rejected",    value:apps.filter(a=>a.status==="Rejected").length,   color:"#dc2626" },
   ];
 
   return (
-    <div className="space-y-6">
-      <PageHeader title="Applications" subtitle={`${apps.length} candidates across all positions`}>
-        <SearchBar placeholder="Search candidates..." value={search} onChange={e => setSearch(e.target.value)} />
-        <GhostBtn icon={Download}>Export CSV</GhostBtn>
-        <PrimaryBtn icon={Plus}>Post Job</PrimaryBtn>
+    <div className="space-y-5">
+      <style>{`.kanban-scroll::-webkit-scrollbar{height:6px}.kanban-scroll::-webkit-scrollbar-track{background:#f1f5f9;border-radius:8px}.kanban-scroll::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:8px}`}</style>
+
+      <PageHeader title="Job Applications" subtitle={`${apps.length} candidates in the hiring pipeline`}>
+        <SearchBar placeholder="Search candidates or roles…" value={search} onChange={e=>{setSearch(e.target.value);setPage(1);}}/>
       </PageHeader>
 
-      {/* Stats row */}
+      {/* Stats */}
       <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
-        {summaryStats.map((s, i) => (
-          <Reveal key={i} delay={i * 0.05}>
-            <div className="bg-white rounded-2xl border-2 border-black p-4 text-center hover:-translate-y-0.5 hover:shadow-md hover:shadow-violet-100 transition-all">
-              <p className="font-bold text-2xl" style={{ fontFamily: "'Fraunces',serif", color: s.color }}>{s.value}</p>
-              <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest mt-1">{s.label}</p>
+        {SUMMARY.map((s,i) => (
+          <Reveal key={i} delay={i*.04}>
+            <div className="bg-white rounded-xl border border-gray-100 p-3.5 shadow-sm text-center">
+              <p className="font-bold text-xl" style={{fontFamily:"'Fraunces',serif",color:s.color}}>{s.value}</p>
+              <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">{s.label}</p>
             </div>
           </Reveal>
         ))}
       </div>
 
       {/* View Toggle */}
-      <div className="flex gap-2">
-        {["kanban", "table"].map(v => (
-          <PillFilter key={v} label={v} active={view === v} onClick={() => setView(v)} />
-        ))}
+      <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex gap-1.5 bg-gray-100 p-1 rounded-xl">
+          {["kanban","table"].map(v => (
+            <button key={v} onClick={()=>setView(v)}
+              className={`px-4 py-1.5 rounded-lg text-xs font-bold capitalize transition-all ${view===v?"bg-white text-gray-900 shadow-sm":"text-gray-500 hover:text-gray-700"}`}>
+              {v==="kanban"?"🗂 Kanban":"📋 Table"}
+            </button>
+          ))}
+        </div>
+        {view==="table" && <p className="text-xs text-gray-400">{filtered.length} results</p>}
       </div>
 
+      {loading && <TableSkeleton rows={5}/>}
+
       {/* Kanban */}
-      {!loading && view === "kanban" && (
-        <div className="flex gap-4 overflow-x-auto pb-4">
-          {PIPELINE_STAGES.map(stage => (
-            <StageColumn key={stage} stage={stage} candidates={byStage(stage)} />
-          ))}
+      {!loading && view==="kanban" && (
+        <div className="flex gap-4 overflow-x-auto pb-4 kanban-scroll items-start">
+          {STAGES.map(s=><KanbanCol key={s} stage={s} candidates={byStage(s)} onClick={setSelected}/>)}
         </div>
       )}
 
       {/* Table */}
-      {!loading && view === "table" && (
+      {!loading && view==="table" && (
         <Reveal>
-          <Table headers={["Candidate","Role","Experience","Score","Status","Applied","Actions"]}>
-            {filtered.map((app, i) => (
-              <motion.tr
-                key={app.id}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.04 }}
-                className="hover:bg-violet-50/40 transition-colors cursor-pointer"
-                onClick={() => setSelected(app)}
-              >
-                <td className="px-5 py-4">
+          <Table headers={["Candidate","Role","Type","Status","Applied","Resume"]}>
+            {pageSlice.map((app,i) => (
+              <motion.tr key={app._id} initial={{opacity:0,x:-8}} animate={{opacity:1,x:0}} transition={{delay:i*.03}}
+                className="hover:bg-gray-50 transition-colors cursor-pointer" onClick={()=>setSelected(app)}>
+                <td className="px-5 py-3.5">
                   <div className="flex items-center gap-3">
-                    <Avatar name={app.name} size="sm" />
+                    <Avatar name={app.name} size="sm"/>
                     <div>
-                      <p className="font-semibold text-slate-900 text-sm">{app.name}</p>
+                      <p className="font-semibold text-gray-900 text-sm">{app.name}</p>
                       <p className="text-[10px] text-gray-400">{app.email}</p>
                     </div>
                   </div>
                 </td>
-                <td className="px-5 py-4 text-sm text-slate-700 font-medium">{app.role}</td>
-                <td className="px-5 py-4 text-sm text-gray-500">{app.experience}</td>
-                <td className="px-5 py-4">
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold text-sm" style={{ color: SCORE_COLOR(app.score) }}>{app.score}</span>
-                    <div className="w-20">
-                      <ProgressBar value={app.score} color={SCORE_COLOR(app.score)} />
-                    </div>
-                  </div>
+                <td className="px-5 py-3.5 text-sm text-gray-700 font-medium">{app.position}</td>
+                <td className="px-5 py-3.5">
+                  <span className="text-[10px] font-bold bg-gray-100 text-gray-600 px-2.5 py-1 rounded-lg uppercase tracking-wider">{app.type}</span>
                 </td>
-                <td className="px-5 py-4"><StatusBadge status={app.status} /></td>
-                <td className="px-5 py-4 text-xs text-gray-400">{app.applied}</td>
-                <td className="px-5 py-4" onClick={e => e.stopPropagation()}><RowActions /></td>
+                <td className="px-5 py-3.5"><StatusBadge status={app.status}/></td>
+                <td className="px-5 py-3.5 text-xs text-gray-400 whitespace-nowrap">{FMT(app.createdAt)}</td>
+                <td className="px-5 py-3.5" onClick={e=>e.stopPropagation()}>
+                  {app.resume && (
+                    <a href={app.resume} target="_blank" rel="noreferrer"
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-violet-600 hover:text-violet-800 bg-violet-50 px-3 py-1.5 rounded-lg border border-violet-100 transition-colors">
+                      View <ExternalLink size={11}/>
+                    </a>
+                  )}
+                </td>
               </motion.tr>
             ))}
           </Table>
+
+          {filtered.length===0 && <EmptyState icon="📭" title="No applications found" desc="Try adjusting your search."/>}
+
+          <Pagination page={page} totalPages={totalPages} total={filtered.length} perPage={PER_PAGE}
+            onPrev={()=>setPage(p=>p-1)} onNext={()=>setPage(p=>p+1)}/>
         </Reveal>
       )}
 
-      {/* Modal */}
+      {/* Modals */}
       <AnimatePresence>
-        {selected && <CandidateModal candidate={selected} onClose={() => setSelected(null)} />}
+        {selected && <CandidateModal candidate={selected} onClose={()=>setSelected(null)} onUpdateStatus={handleUpdateStatus} onDelete={id=>{setDelId(id);setSelected(null);}}/>}
+        {delId    && <ConfirmDialog message="This will permanently delete the application. This cannot be undone." onConfirm={confirmDelete} onCancel={()=>setDelId(null)}/>}
+        {toast    && <Toast message={toast.msg} type={toast.type} onClose={()=>setToast(null)}/>}
       </AnimatePresence>
     </div>
   );

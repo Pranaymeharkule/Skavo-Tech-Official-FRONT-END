@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { Monitor, Smartphone, Cloud, Zap, Bot, ShieldCheck, BarChart3, Search, PenTool, Code2, Rocket, CheckCircle2 } from "lucide-react";
+import { Code, Globe} from "lucide-react";
 
 /* ─── INLINE ICONS ─── */
 const ArrowRight = () => (
@@ -39,15 +40,58 @@ function Reveal({ children, delay = 0, y = 28, className = "" }) {
   );
 }
 
-/* ─── DATA ─── */
+const TECH_CORE = [
+  { title: "Web Development", category: "Core Tech", image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=800&auto=format&fit=crop" },
+  { title: "Mobile Apps", category: "Core Tech", image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=800&auto=format&fit=crop" },
+  { title: "Cloud Systems", category: "Core Tech", image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800&auto=format&fit=crop" },
+  { title: "AI Solutions", category: "Core Tech", image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=800&auto=format&fit=crop" },
+{ 
+    title: "UI/UX Design", 
+    category: "Creative", 
+    image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&q=80&w=1000",
+    desc: "Modern, conversion-focused design systems."
+  },
+  { title: "Cyber Security", category: "Core Tech", image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800&auto=format&fit=crop" },
+];
+
+const DIGITAL_GROW = [
+  { title: "SEO Strategy", category: "Growth", image: "https://images.unsplash.com/photo-1571721738239-743c94bb586d?q=80&w=800&auto=format&fit=crop" },
+  { title: "Social Marketing", category: "Growth", image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=800&auto=format&fit=crop" },
+  { title: "Paid Ads", category: "Growth", image: "https://images.unsplash.com/photo-1551288049-bbbda536ad37?q=80&w=800&auto=format&fit=crop" },
+  { title: "E-mail Campaigns", category: "Growth", image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=800&auto=format&fit=crop" },
+  { title: "Content Creation", category: "Growth", image: "https://images.unsplash.com/photo-1493612276216-ee3925520721?q=80&w=800&auto=format&fit=crop" },
+  { title: "Data Analytics", category: "Growth", image: "https://images.unsplash.com/photo-1551288049-bbbda536ad37?q=80&w=800&auto=format&fit=crop" },
+];
+
 const CAPABILITIES = [
-  { num: "01", icon: Monitor,     title: "Web & App Development",  desc: "We design and build websites, web apps, and platforms that are fast, beautiful, and ready to scale the moment traffic spikes.",   tags: ["React", "Next.js", "Node.js"] },
-  { num: "02", icon: Smartphone,  title: "Mobile Applications",    desc: "Native-quality iOS and Android apps built with React Native — one codebase, two platforms, zero compromises on feel.",           tags: ["iOS", "Android", "React Native"] },
-  { num: "03", icon: Zap,         title: "Digital Marketing",       desc: "We help you reach the right audience with targeted campaigns that drive real, measurable results for your business.",              tags: ["SEO", "Ads", "Growth"] },
-  { num: "04", icon: Cloud,       title: "Cloud & Infrastructure",  desc: "We set up and manage the cloud systems that keep your product alive 24/7 — auto-scaling, monitored, and bulletproof.",           tags: ["AWS", "GCP", "DevOps"] },
-  { num: "05", icon: Bot,         title: "AI & Smart Features",     desc: "We embed AI directly into your product — intelligent search, chatbots, recommendations, and automation that actually works.",    tags: ["LLMs", "Automation", "ML"] },
-  { num: "06", icon: ShieldCheck, title: "Security & Compliance",   desc: "From penetration testing to SOC 2 readiness — we harden your product so your users' data stays safe and your audits pass.",     tags: ["SOC 2", "GDPR", "Pen Testing"] },
-  { num: "07", icon: BarChart3,   title: "Data & Analytics",        desc: "We turn scattered numbers into real-time dashboards and reports that let you make faster, smarter business decisions.",          tags: ["Dashboards", "BI", "Pipelines"] },
+  {
+    title: "Web Development",
+    desc: "High-performance, scalable websites using modern technologies like React and Tailwind.",
+    tags: ["React", "Tailwind", "Frontend"],
+    icon: Code,
+    image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
+  },
+  {
+    title: "UI/UX Design",
+    desc: "Beautiful and intuitive user interfaces designed to maximize user engagement.",
+    tags: ["Figma", "Design", "UX"],
+    icon: Globe,
+    image: "https://images.unsplash.com/photo-1581291519195-ef11498d1cf5",
+  },
+  {
+    title: "Mobile Apps",
+    desc: "Responsive and fast mobile applications for Android and iOS platforms.",
+    tags: ["App", "Android", "iOS"],
+    icon: Smartphone,
+    image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c",
+  },
+  {
+    title: "Digital Marketing",
+    desc: "Grow your business with SEO, social media, and paid marketing strategies.",
+    tags: ["SEO", "Ads", "Growth"],
+    icon: BarChart3,
+    image: "https://images.unsplash.com/photo-1533750349088-cd871a92f312",
+  },
 ];
 
 const WORKS = [
@@ -97,6 +141,41 @@ const FAQS = [
   { q: "Do you work with startups or only enterprises?", a: "Both. We love early-stage founders as much as enterprise product teams. Everyone gets the same focus and quality." },
 ];
 
+const ServiceCard = ({ item }) => (
+  <div className="group relative h-[230px] w-full rounded-[24px] overflow-hidden bg-slate-900 shadow-lg transition-all duration-500 hover:-translate-y-1 cursor-pointer">
+    
+    <img 
+      src={item.image} 
+      alt={item.title}
+      className="absolute inset-0 w-full h-full object-cover opacity-60 scale-105 group-hover:scale-110 group-hover:opacity-80 transition-all duration-1000 ease-in-out"
+    />
+    
+    {/* Stronger Bottom Overlay */}
+    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-90" />
+
+    {/* Slimmer, Bottom-Anchored Glass Box */}
+    <div className="absolute bottom-3 left-3 right-3 p-4 rounded-[18px] border border-white/10 bg-white/5 backdrop-blur-md transition-all duration-500 overflow-hidden">
+      
+      {/* Animated Shine */}
+      <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-1000" />
+      
+      {/* Tiny Badge */}
+      <span className="inline-block px-2 py-0.5 rounded-full bg-violet-500/20 border border-violet-400/30 text-[8px] font-bold text-violet-300 uppercase tracking-[0.2em] mb-1">
+        {item.category}
+      </span>
+      
+      {/* Smaller Heading - fits better in 230px */}
+      <h3 className="text-lg font-bold text-white tracking-tight leading-tight group-hover:mb-2 transition-all duration-300">
+        {item.title}
+      </h3>
+      
+      {/* Description - only appears on hover to save space */}
+      <p className="text-[11px] text-slate-300 opacity-0 max-h-0 group-hover:max-h-12 group-hover:opacity-100 transition-all duration-500 ease-in-out leading-tight">
+        {item.desc}
+      </p>
+    </div>
+  </div>
+);
 
 /* ═══════════════════════════════════════ MAIN ════════════════════════════════════════ */
 export default function SkavoTech() {
@@ -131,14 +210,11 @@ export default function SkavoTech() {
         .card-lift { transition:transform .35s cubic-bezier(.22,1,.36,1), box-shadow .35s ease; }
         .card-lift:hover { transform:translateY(-7px); box-shadow:0 28px 56px rgba(109,40,217,.13); }
 
-        /* shimmer */
-        @keyframes sweep { from{left:-80%} to{left:120%} }
-
         /* Float icon */
         @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
         .float-icon { animation:float 3.5s ease-in-out infinite; }
 
-        /* Testimonial auto-scroll — 3 cards visible, infinite */
+        /* Testimonial auto-scroll */
         @keyframes tscroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
         .t-track {
           display:flex;
@@ -159,9 +235,14 @@ export default function SkavoTech() {
         /* Process card */
         .process-card { transition: transform .35s cubic-bezier(.22,1,.36,1), box-shadow .35s ease, border-color .3s ease; }
         .process-card:hover { transform:translateY(-6px); box-shadow:0 24px 48px rgba(109,40,217,.14); border-color:#c4b5fd !important; }
-      `}</style>
 
-    
+        /* Services divider */
+        .services-divider {
+          height: 1px;
+          background: linear-gradient(90deg, transparent, #e2d9f3, transparent);
+          margin: 2rem 0;
+        }
+      `}</style>
 
       {/* ════════ HERO ════════ */}
       <section className="relative min-h-screen flex items-center pt-24 pb-20 overflow-hidden bg-[#fdfdff]">
@@ -245,82 +326,73 @@ export default function SkavoTech() {
         </div>
       </section>
 
-      {/* ════════ SERVICES ════════ */}
-      <section id="services" className="py-20 sm:py-28 bg-[#fdfdff] relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-[480px] h-[480px] bg-violet-100/50 blur-[120px] pointer-events-none opacity-60" />
-        <div className="absolute bottom-0 left-0 w-[480px] h-[480px] bg-fuchsia-100/40 blur-[120px] pointer-events-none opacity-60" />
 
-        <div className="max-w-7xl mx-auto px-5 sm:px-8 relative z-10">
-          {/* Centered heading */}
-          <Reveal className="mb-16 sm:mb-20">
-            <div className="flex flex-col items-center text-center">
-              <div className="flex items-center gap-3 mb-5 justify-center">
-                <div className="h-px w-10 bg-violet-500" />
-                <span className="sans text-violet-600 font-black uppercase tracking-[0.3em] text-sm sm:text-2xl">Our Capabilities</span>
-                <div className="h-px w-10 bg-violet-500" />
-              </div>
-              <h2 className="serif font-bold text-slate-900 tracking-tight leading-[1.07]"
-                style={{ fontSize:"clamp(2.2rem,5vw,4rem)" }}>
-                Pushing the Boundaries <br className="hidden sm:block" />
-                <span className="grad italic">of Digital Engineering.</span>
-              </h2>
-              <p className="sans text-slate-500 mt-5 max-w-xl text-base sm:text-lg leading-relaxed">
-                End-to-end product expertise across every layer of the stack — from pixel to infrastructure.
-              </p>
-            </div>
-          </Reveal>
+           {/* ════════ SERVICES ════════ */}
 
-          <div className="space-y-4">
-            {CAPABILITIES.map((cap, i) => {
-              const Icon = cap.icon;
-              return (
-                <Reveal key={i} delay={i * 0.07}>
-                  <div className="group relative">
-                    <div className="absolute -inset-[1px] rounded-[2rem] opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-[2px]"
-                      style={{ background:"linear-gradient(135deg,#7c3aed,#c026d3,#7c3aed)" }} />
-                    <div className="relative flex flex-col sm:flex-row sm:items-center gap-5 sm:gap-8 px-6 sm:px-10 py-7 sm:py-9 rounded-[2rem] bg-white border border-black group-hover:border-transparent group-hover:shadow-[0_32px_64px_rgba(124,58,237,0.14)] group-hover:-translate-y-1 transition-all duration-500 overflow-hidden">
-                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-700"
-                        style={{ background:"linear-gradient(105deg, transparent 40%, rgba(255,255,255,.5) 50%, transparent 60%)", animation:"sweep 1.5s ease forwards" }} />
-                      <span className="serif text-3xl sm:text-4xl font-bold text-black group-hover:text-violet-500 transition-colors flex-shrink-0 w-10">{cap.num}</span>
-                      <div className="hidden sm:flex w-14 h-14 rounded-[1.2rem] bg-violet-50 border border-violet-100 items-center justify-center group-hover:bg-violet-900 transition-all duration-400 float-icon flex-shrink-0">
-                        <Icon size={24} className="text-violet-600 group-hover:text-white transition-colors duration-400" strokeWidth={1.8} />
-                      </div>
-                      <div className="sm:w-52 flex-shrink-0">
-                        <h3 className="serif text-lg sm:text-2xl font-bold text-slate-900 group-hover:text-violet-800 transition-colors mb-3">{cap.title}</h3>
-                        <div className="flex gap-2 flex-wrap">
-                          {cap.tags.map(t => (
-                            <span key={t} className="sans text-[10px] font-bold text-violet-700 uppercase tracking-wider px-2.5 py-1 bg-violet-50 rounded-lg group-hover:bg-violet-600 group-hover:text-white transition-all duration-300">{t}</span>
-                          ))}
-                        </div>
-                      </div>
-                      <p className="sans flex-1 text-black text-sm sm:text-base leading-relaxed group-hover:text-slate-700 transition-colors">{cap.desc}</p>
-                    </div>
-                  </div>
-                </Reveal>
-              );
-            })}
+     <section id="services" className="py-10 bg-[#fafbff] relative overflow-hidden">
+      {/* Background Glows (Pro Branding) */}
+      <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-violet-200/30 blur-[150px] rounded-full" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-fuchsia-200/30 blur-[150px] rounded-full" />
+
+      <div className="max-w-7xl mx-auto px-8 relative z-10">
+        
+        {/* Header Section */}
+        <div className="text-center mb-10">
+          <h2 className="text-slate-900 font-extrabold tracking-tight mb-4" style={{ fontSize: "clamp(2.5rem, 3vw, 4rem)" }}>
+            Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-fuchsia-600 italic">Core Expertise</span>
+          </h2>
+          <div className="h-1.5 w-24 bg-gradient-to-r from-violet-600 to-fuchsia-600 mx-auto rounded-full" />
+        </div>
+
+        {/* --- TECH CORE --- */}
+        <div className="mb-24">
+          <div className="flex items-center gap-4 mb-10">
+            <h4 className="text-2xl font-bold text-slate-800 relative">Tech Core</h4>
+            <div className="h-px flex-1 bg-slate-200" />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {TECH_CORE.map((item, i) => (
+              <ServiceCard key={i} item={item} />
+            ))}
           </div>
         </div>
-      </section>
+
+        {/* --- DIGITAL GROW --- */}
+        <div>
+          <div className="flex items-center gap-4 mb-10">
+            <h4 className="text-2xl font-bold text-slate-800 relative">Digital Grow</h4>
+            <div className="h-px flex-1 bg-slate-200" />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {DIGITAL_GROW.map((item, i) => (
+              <ServiceCard key={i} item={item} />
+            ))}
+          </div>
+        </div>
+
+      </div>
+    </section>
+
 
       {/* ════════ OUR WORK ════════ */}
-      <section id="work" className="py-10 sm:py-17 bg-white relative">
+      <section id="work" className=" bg-white relative">
         <div className="max-w-7xl mx-auto px-5 sm:px-8">
           <Reveal className="mb-14 sm:mb-16">
             <div className="flex flex-col items-center text-center">
-              <div className="flex items-center gap-3 mb-5 justify-center">
+              <div className="flex items-center gap-3 mb-3 justify-center">
                 <div className="h-px w-10 bg-fuchsia-500" />
                 <span className="sans text-fuchsia-600 font-black uppercase tracking-[0.3em] text-sm sm:text-2xl">Case Studies</span>
                 <div className="h-px w-10 bg-fuchsia-500" />
               </div>
-              <h2 className="serif font-bold text-slate-900 tracking-tight leading-[1.07]"
-                style={{ fontSize:"clamp(2.2rem,4.8vw,4rem)" }}>
-                Products Built for <br className="hidden sm:block" />
-                <span className="grad italic">Peak Performance.</span>
+             <h2
+               className="serif font-bold text-slate-900 tracking-tight leading-[1.07]"
+               style={{ fontSize: "clamp(2.2rem,4.8vw,4rem)" }}
+            >
+               Products Built for{" "}
+              <span className="grad italic">Peak Performance.</span>
               </h2>
-              <p className="sans text-slate-500 mt-5 max-w-xl text-base sm:text-lg leading-relaxed">
-                Real clients, real results. Here's what we've built.
-              </p>
             </div>
           </Reveal>
 
@@ -358,14 +430,12 @@ export default function SkavoTech() {
       </section>
 
       {/* ════════ PROCESS ════════ */}
-      <section id="process" className="py-20 sm:py-28 bg-[#fdfdff] relative overflow-hidden">
+      <section id="process" className="py-20 sm:py-20 bg-[#fdfdff] relative overflow-hidden">
         <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-violet-100/40 blur-[120px] pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-fuchsia-100/30 blur-[120px] pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-5 sm:px-8 relative z-10">
-
-          {/* Centered heading */}
-          <Reveal className="mb-16 sm:mb-20">
+          <Reveal className="mb-16 sm:mb-10">
             <div className="flex flex-col items-center text-center">
               <div className="flex items-center gap-3 mb-5 justify-center">
                 <div className="h-px w-10 bg-violet-400" />
@@ -376,24 +446,17 @@ export default function SkavoTech() {
                 style={{ fontSize:"clamp(2.2rem,4.8vw,4rem)" }}>
                 From Idea to <span className="grad italic">Live Product.</span>
               </h2>
-              <p className="sans text-slate-500 mt-5 max-w-2xl text-base sm:text-lg leading-relaxed">
-                A battle-tested playbook across 200+ products. No confusion — you always know exactly what's happening and what comes next.
-              </p>
             </div>
           </Reveal>
 
-          {/* Process Cards — 4 columns, proper cards */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {PROCESS.map((p, i) => {
               const Icon = p.icon;
               return (
                 <Reveal key={i} delay={i * 0.1}>
                   <div className="process-card relative flex flex-col h-full rounded-[2rem] bg-white border border-black p-7 sm:p-8 overflow-hidden">
-                    {/* Top accent */}
                     <div className="absolute top-0 left-0 right-0 h-1 rounded-t-[2rem]"
                       style={{ background:`linear-gradient(90deg,${p.color},#c026d3)` }} />
-
-                    {/* Step + icon row */}
                     <div className="flex items-center justify-between mb-7">
                       <span className="sans text-[13px] font-black uppercase tracking-[0.25em] text-black">Step {p.step}</span>
                       <div className="w-12 h-12 rounded-2xl flex items-center justify-center"
@@ -401,14 +464,8 @@ export default function SkavoTech() {
                         <Icon size={22} style={{ color:p.color }} strokeWidth={2} />
                       </div>
                     </div>
-
-                    {/* Title */}
                     <h3 className="serif text-2xl font-bold text-slate-900 mb-3 leading-snug">{p.title}</h3>
-
-                    {/* Description */}
                     <p className="sans text-base text-black leading-relaxed mb-7">{p.desc}</p>
-
-                    {/* Checkpoints */}
                     <ul className="mt-auto space-y-2.5">
                       {p.bullets.map((b, j) => (
                         <li key={j} className="flex items-start gap-2.5">
@@ -417,8 +474,6 @@ export default function SkavoTech() {
                         </li>
                       ))}
                     </ul>
-
-                    {/* Connector arrow — desktop only */}
                     {i < PROCESS.length - 1 && (
                       <div className="hidden lg:flex absolute -right-3.5 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-white border border-violet-200 items-center justify-center shadow-sm">
                         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
@@ -431,13 +486,11 @@ export default function SkavoTech() {
               );
             })}
           </div>
-
-  
         </div>
       </section>
 
       {/* ════════ TESTIMONIALS ════════ */}
-      <section className="py-10 sm:py-17 bg-white overflow-hidden">
+      <section className="py-4 sm:py-4 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-5 sm:px-8">
           <Reveal className="mb-14 sm:mb-16">
             <div className="flex flex-col items-center text-center">
@@ -447,22 +500,16 @@ export default function SkavoTech() {
                 <div className="h-px w-10 bg-fuchsia-400" />
               </div>
               <h2 className="serif font-bold text-slate-900 tracking-tight"
-                style={{ fontSize:"clamp(2.2rem,4.8vw,4rem)" }}>
-                Heard From <br className="hidden sm:block" />
-                <span className="grad italic">Our Clients.</span>
+                  style={{ fontSize: "clamp(2.2rem,4.8vw,4rem)" }}>
+                 Heard From{" "}
+                  <span className="grad italic">Our Clients.</span>
               </h2>
-              <p className="sans text-slate-500 mt-5 max-w-xl text-base sm:text-lg leading-relaxed">
-                Don't take our word for it — here's what the people we've built for have to say.
-              </p>
             </div>
           </Reveal>
 
-          {/* Auto-scroll — 3 cards visible, infinite */}
           <div className="relative overflow-hidden">
             <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-24 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
             <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-24 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
-
-            {/* Track: 6 items (3 × 2) so -50% = back to start */}
             <div className="t-track py-2">
               {[...REVIEWS, ...REVIEWS].map((r, i) => (
                 <div key={i} className="flex-shrink-0" style={{ width:"clamp(260px,30vw,380px)" }}>
@@ -487,10 +534,8 @@ export default function SkavoTech() {
         </div>
       </section>
 
-   
-
       {/* ════════ FAQ ════════ */}
-      <section id="faq" className="py-20 sm:py-28 bg-white">
+      <section id="faq" className="py-20 sm:py-15 bg-white">
         <div className="max-w-3xl mx-auto px-5 sm:px-8">
           <Reveal className="mb-12 sm:mb-16">
             <div className="flex flex-col items-center text-center">
@@ -503,9 +548,6 @@ export default function SkavoTech() {
                 style={{ fontSize:"clamp(2rem,4vw,3.2rem)" }}>
                 Questions We Get Asked
               </h2>
-              <p className="sans text-slate-500 mt-4 text-sm sm:text-base leading-relaxed">
-                Everything you need to know before we start building together.
-              </p>
             </div>
           </Reveal>
           <div className="space-y-3">
@@ -569,7 +611,6 @@ export default function SkavoTech() {
         </Reveal>
       </section>
 
-  
     </div>
   );
 }

@@ -1,123 +1,91 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import api from "../../api/axios";
+import { Plus, Briefcase, Users, DollarSign, MapPin, Clock, Trash2, ToggleLeft, ToggleRight, X } from "lucide-react";
 import {
-  Plus, Download, Briefcase, Users, Calendar,
-  MapPin, Clock, DollarSign, X, Tag,
-  ToggleLeft, ToggleRight, ChevronDown
-} from "lucide-react";
-import {
-  Reveal, StatusBadge, SearchBar, PageHeader,
-  PrimaryBtn, GhostBtn, PillFilter, RowActions
+  Reveal, StatusBadge, SearchBar, PageHeader, PrimaryBtn, PillFilter,
+  Pagination, EmptyState, CardSkeleton, ConfirmDialog, Toast
 } from "./adminUI";
 
-/* ── Mock / API placeholder ── */
-const MOCK_VACANCIES = [
-  { id: 1, title: "Senior React Developer",         dept: "Engineering",    type: "Full-time", location: "Remote",    applicants: 34, deadline: "2025-04-01", status: "active",  salary: "$95k–$130k",  posted: "2025-03-01", description: "We need a seasoned React dev to lead our frontend guild. Must have 5+ years and strong TypeScript skills." },
-  { id: 2, title: "UI/UX Designer",                  dept: "Design",         type: "Full-time", location: "Hybrid",    applicants: 21, deadline: "2025-04-10", status: "active",  salary: "$70k–$95k",   posted: "2025-03-05", description: "Looking for a product designer who can own entire design systems end-to-end. Figma expert required." },
-  { id: 3, title: "DevOps Engineer",                 dept: "Infrastructure", type: "Full-time", location: "Remote",    applicants: 15, deadline: "2025-03-28", status: "paused",  salary: "$90k–$120k",  posted: "2025-02-28", description: "We're scaling our infrastructure rapidly. Kubernetes and Terraform experience essential." },
-  { id: 4, title: "AI / ML Engineer",                dept: "AI",             type: "Full-time", location: "On-site",   applicants: 48, deadline: "2025-04-15", status: "active",  salary: "$110k–$155k", posted: "2025-03-08", description: "Help us embed AI into every product we build. LLM fine-tuning, RAG pipelines, Python mastery." },
-  { id: 5, title: "Business Development Rep",        dept: "Sales",          type: "Full-time", location: "Remote",    applicants: 62, deadline: "2025-03-30", status: "closed",  salary: "$55k–$75k",   posted: "2025-02-15", description: "Drive outbound pipeline for our agency services. SaaS or agency background preferred." },
-  { id: 6, title: "Technical Project Manager",       dept: "Delivery",       type: "Full-time", location: "Hybrid",    applicants: 18, deadline: "2025-04-20", status: "active",  salary: "$80k–$110k",  posted: "2025-03-10", description: "Own delivery across multiple client accounts. Agile certified, engineering background a big plus." },
-];
-
-const DEPT_COLORS = {
-  Engineering:    { bg: "#eff6ff", text: "#2563eb" },
-  Design:         { bg: "#fdf4ff", text: "#a21caf" },
-  Infrastructure: { bg: "#f0fdf4", text: "#16a34a" },
-  AI:             { bg: "#f5f3ff", text: "#7c3aed" },
-  Sales:          { bg: "#fff7ed", text: "#ea580c" },
-  Delivery:       { bg: "#ecfdf5", text: "#059669" },
+const DEPTS = ["Engineering","Design","Infrastructure","AI","Sales","Delivery"];
+const DEPT_STYLE = {
+  Engineering:{"bg":"#eff6ff","text":"#2563eb"}, Design:{"bg":"#fdf4ff","text":"#a21caf"},
+  Infrastructure:{"bg":"#f0fdf4","text":"#16a34a"}, AI:{"bg":"#f5f3ff","text":"#7c3aed"},
+  Sales:{"bg":"#fff7ed","text":"#ea580c"}, Delivery:{"bg":"#ecfdf5","text":"#059669"},
 };
+const PER_PAGE = 9;
 
 /* ── Post Job Modal ── */
-function PostJobModal({ onClose }) {
-  const [form, setForm] = useState({ title: "", dept: "", type: "Full-time", location: "Remote", salary: "", deadline: "" });
-  const up = (k, v) => setForm(f => ({ ...f, [k]: v }));
+function PostJobModal({ onClose, fetchJobs }) {
+  const [form, setForm] = useState({title:"",dept:"Engineering",type:"Full-time",location:"Remote",salary:"",deadline:"",description:""});
+  const [busy, setBusy] = useState(false);
+
+  const handleSubmit = async () => {
+    if (!form.title || !form.deadline) return alert("Title and deadline are required.");
+    setBusy(true);
+    try { await api.post("/jobs",form); fetchJobs(); onClose(); }
+    catch { alert("Failed to post job"); } finally { setBusy(false); }
+  };
+
+  const inp = "w-full px-3.5 py-2.5 text-sm rounded-xl border border-gray-200 focus:border-violet-400 focus:ring-2 focus:ring-violet-50 outline-none transition-all";
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
-      onClick={onClose}
-    >
-      <motion.div
-        initial={{ opacity: 0, scale: 0.94, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.94, y: 20 }}
-        transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-        className="bg-white rounded-3xl border-2 border-black w-full max-w-lg p-8 relative max-h-[90vh] overflow-y-auto"
-        onClick={e => e.stopPropagation()}
-      >
-        <button onClick={onClose} className="absolute top-5 right-5 w-8 h-8 rounded-xl border border-black flex items-center justify-center text-gray-400 hover:bg-gray-50">
-          <X size={14} />
-        </button>
-        <h3 className="font-bold text-xl text-slate-900 mb-6" style={{ fontFamily: "'Fraunces',serif" }}>
-          Post New Vacancy
-        </h3>
+    <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <motion.div initial={{opacity:0,scale:.96,y:12}} animate={{opacity:1,scale:1,y:0}} exit={{opacity:0,scale:.96}}
+        transition={{duration:.22}} onClick={e=>e.stopPropagation()}
+        className="bg-white rounded-2xl w-full max-w-lg shadow-2xl border border-gray-100 overflow-y-auto max-h-[90vh]">
 
-        <div className="space-y-4">
-          {[
-            { label: "Job Title", key: "title", placeholder: "e.g. Senior Backend Engineer" },
-            { label: "Department", key: "dept", placeholder: "e.g. Engineering" },
-            { label: "Salary Range", key: "salary", placeholder: "e.g. $80k–$110k" },
-            { label: "Application Deadline", key: "deadline", type: "date" },
-          ].map(({ label, key, placeholder, type = "text" }) => (
-            <div key={key}>
-              <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1.5">{label}</label>
-              <input
-                type={type}
-                placeholder={placeholder}
-                value={form[key]}
-                onChange={e => up(key, e.target.value)}
-                className="w-full px-4 py-2.5 text-sm rounded-xl border-2 border-black focus:border-violet-500 focus:ring-2 focus:ring-violet-100 focus:outline-none font-medium text-slate-800 placeholder:text-gray-400"
-              />
-            </div>
-          ))}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 sticky top-0 bg-white z-10">
+          <h3 className="font-bold text-gray-900 text-base" style={{fontFamily:"'Fraunces',serif"}}>Post New Vacancy</h3>
+          <button onClick={onClose} className="w-8 h-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-400 hover:bg-gray-50 transition-colors"><X size={14}/></button>
+        </div>
 
-          {/* Type & Location */}
-          <div className="grid grid-cols-2 gap-3">
-            {[
-              { label: "Type",     key: "type",     opts: ["Full-time","Part-time","Contract","Freelance"] },
-              { label: "Location", key: "location", opts: ["Remote","Hybrid","On-site"] },
-            ].map(({ label, key, opts }) => (
-              <div key={key}>
-                <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1.5">{label}</label>
-                <div className="relative">
-                  <select
-                    value={form[key]}
-                    onChange={e => up(key, e.target.value)}
-                    className="w-full appearance-none pl-3 pr-8 py-2.5 text-sm rounded-xl border-2 border-black focus:border-violet-500 focus:outline-none font-medium text-slate-800 bg-white"
-                  >
-                    {opts.map(o => <option key={o}>{o}</option>)}
-                  </select>
-                  <ChevronDown size={12} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                </div>
-              </div>
-            ))}
-          </div>
-
+        <div className="p-6 space-y-4">
           <div>
-            <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1.5">Job Description</label>
-            <textarea
-              rows={4}
-              placeholder="Describe the role, requirements, and what success looks like..."
-              className="w-full px-4 py-3 text-sm rounded-xl border-2 border-black focus:border-violet-500 focus:ring-2 focus:ring-violet-100 focus:outline-none font-medium text-slate-800 placeholder:text-gray-400 resize-none"
-            />
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Job Title *</label>
+            <input type="text" placeholder="Senior Backend Engineer" value={form.title} onChange={e=>setForm({...form,title:e.target.value})} className={inp}/>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Department</label>
+              <select value={form.dept} onChange={e=>setForm({...form,dept:e.target.value})} className={inp}>
+                {DEPTS.map(d=><option key={d}>{d}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Type</label>
+              <select value={form.type} onChange={e=>setForm({...form,type:e.target.value})} className={inp}>
+                {["Full-time","Part-time","Contract","Internship"].map(t=><option key={t}>{t}</option>)}
+              </select>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Location</label>
+              <select value={form.location} onChange={e=>setForm({...form,location:e.target.value})} className={inp}>
+                {["Remote","Hybrid","On-site","Nagpur","Navi Mumbai"].map(l=><option key={l}>{l}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Salary Range</label>
+              <input type="text" placeholder="e.g. ₹8L–₹14L" value={form.salary} onChange={e=>setForm({...form,salary:e.target.value})} className={inp}/>
+            </div>
+          </div>
+          <div>
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Application Deadline *</label>
+            <input type="date" value={form.deadline} onChange={e=>setForm({...form,deadline:e.target.value})} className={inp}/>
+          </div>
+          <div>
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Job Description</label>
+            <textarea rows={4} placeholder="Describe the role, responsibilities, and requirements…" value={form.description} onChange={e=>setForm({...form,description:e.target.value})} className={`${inp} resize-none`}/>
           </div>
         </div>
 
-        <div className="flex gap-3 mt-6">
-          <button
-            onClick={onClose}
-            className="flex-1 py-3 rounded-xl border-2 border-black text-sm font-bold text-slate-700 hover:bg-gray-50 transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={onClose}
-            className="flex-1 py-3 rounded-xl bg-slate-900 text-white text-sm font-bold hover:bg-violet-800 transition-colors"
-          >
-            Post Vacancy
+        <div className="flex gap-3 px-6 pb-6">
+          <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors">Cancel</button>
+          <button onClick={handleSubmit} disabled={busy} className="flex-1 py-2.5 rounded-xl bg-violet-700 text-white text-sm font-semibold hover:bg-violet-800 transition-colors disabled:opacity-50">
+            {busy?"Posting…":"Post Vacancy"}
           </button>
         </div>
       </motion.div>
@@ -126,184 +94,148 @@ function PostJobModal({ onClose }) {
 }
 
 /* ── Vacancy Card ── */
-function VacancyCard({ vac, i, onToggle }) {
-  const deptStyle = DEPT_COLORS[vac.dept] ?? { bg: "#f9fafb", text: "#6b7280" };
-  const daysLeft = Math.ceil((new Date(vac.deadline) - new Date()) / 864e5);
-
+function VacancyCard({ vac, i, onToggle, onDelete }) {
+  const ds   = DEPT_STYLE[vac.dept] ?? {bg:"#f8fafc",text:"#64748b"};
+  const days = Math.ceil((new Date(vac.deadline)-new Date())/864e5);
+  const FMT  = d => new Date(d).toLocaleDateString("en-IN",{day:"numeric",month:"short"});
   return (
-    <Reveal delay={i * 0.06}>
-      <motion.div
-        layout
-        className="group bg-white rounded-2xl border-2 border-black p-6 hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(109,40,217,0.13)] transition-all duration-300 flex flex-col"
-      >
+    <Reveal delay={i*.04}>
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 hover:border-violet-200 hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col h-full">
         {/* Header */}
         <div className="flex items-start justify-between mb-4">
-          <div
-            className="w-12 h-12 rounded-xl flex items-center justify-center border-2 border-black group-hover:border-violet-400 transition-colors"
-            style={{ background: deptStyle.bg }}
-          >
-            <Briefcase size={20} style={{ color: deptStyle.text }} strokeWidth={1.8} />
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{background:ds.bg}}>
+            <Briefcase size={18} style={{color:ds.text}} strokeWidth={1.8}/>
           </div>
           <div className="flex items-center gap-2">
-            <StatusBadge status={vac.status} />
-            <button
-              onClick={() => onToggle(vac.id)}
-              className="p-1.5 rounded-lg hover:bg-gray-50 transition-colors text-gray-400 hover:text-violet-600"
-            >
-              {vac.status === "active"
-                ? <ToggleRight size={18} className="text-green-500" />
-                : <ToggleLeft size={18} />
-              }
+            <StatusBadge status={vac.status}/>
+            <button onClick={()=>onToggle(vac._id,vac.status)} title={vac.status==="active"?"Pause":"Activate"}
+              className="text-gray-400 hover:text-violet-600 transition-colors">
+              {vac.status==="active" ? <ToggleRight size={20} className="text-violet-500"/> : <ToggleLeft size={20}/>}
             </button>
           </div>
         </div>
 
-        <h3 className="font-bold text-slate-900 text-base mb-1 group-hover:text-violet-800 transition-colors" style={{ fontFamily: "'Fraunces',serif" }}>
-          {vac.title}
-        </h3>
+        <h3 className="font-bold text-gray-900 text-base mb-2 leading-tight line-clamp-2">{vac.title}</h3>
 
-        {/* Dept + type tags */}
-        <div className="flex flex-wrap gap-1.5 mb-4">
-          <span
-            className="text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg border"
-            style={{ background: deptStyle.bg, color: deptStyle.text, borderColor: deptStyle.text + "44" }}
-          >
-            {vac.dept}
-          </span>
-          <span className="text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg border border-gray-200 bg-gray-50 text-gray-600">
-            {vac.type}
-          </span>
+        <div className="flex flex-wrap gap-1.5 mb-3">
+          <span className="text-[10px] font-bold px-2 py-1 rounded-lg" style={{background:ds.bg,color:ds.text}}>{vac.dept}</span>
+          <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-gray-100 text-gray-600">{vac.type}</span>
         </div>
 
-        <p className="text-xs text-gray-500 leading-relaxed mb-4 line-clamp-2">{vac.description}</p>
+        {vac.description && (
+          <p className="text-xs text-gray-500 leading-relaxed mb-4 line-clamp-2 flex-1">{vac.description}</p>
+        )}
 
-        {/* Meta */}
-        <div className="space-y-2 mb-4">
-          {[
-            { icon: MapPin,    val: vac.location                           },
-            { icon: Users,     val: `${vac.applicants} applicants`         },
-            { icon: DollarSign,val: vac.salary                             },
-            { icon: Clock,     val: `${daysLeft > 0 ? `${daysLeft}d left` : "Expired"} · Closes ${vac.deadline}` },
-          ].map(({ icon: Icon, val }) => (
-            <div key={val} className="flex items-center gap-2 text-[11px] text-gray-500">
-              <Icon size={11} className="text-violet-400 flex-shrink-0" />
-              <span>{val}</span>
-            </div>
-          ))}
+        <div className="space-y-1.5 text-[11px] text-gray-500 mb-4">
+          <div className="flex items-center gap-2"><MapPin size={11} className="text-gray-400 flex-shrink-0"/>{vac.location}</div>
+          <div className="flex items-center gap-2"><Users size={11} className="text-gray-400 flex-shrink-0"/>{vac.applicants||0} applicants</div>
+          {vac.salary && <div className="flex items-center gap-2"><DollarSign size={11} className="text-gray-400 flex-shrink-0"/>{vac.salary}</div>}
+          <div className="flex items-center gap-2">
+            <Clock size={11} className="text-gray-400 flex-shrink-0"/>
+            <span className={days<0?"text-red-500 font-semibold":days<7?"text-amber-600 font-semibold":""}>
+              {days>0?`${days}d left`:"Expired"} · Closes {FMT(vac.deadline)}
+            </span>
+          </div>
         </div>
 
-        {/* Footer */}
-        <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
-          <span className="font-bold text-violet-900 text-sm" style={{ fontFamily: "'Fraunces',serif" }}>
-            Posted {vac.posted}
-          </span>
-          <RowActions />
+        <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+          <span className="text-[10px] text-gray-400">Posted {FMT(vac.createdAt)}</span>
+          <button onClick={()=>onDelete(vac._id)} className="p-1.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="Delete"><Trash2 size={14}/></button>
         </div>
-      </motion.div>
+      </div>
     </Reveal>
   );
 }
 
-/* ── Main Page ── */
+/* ── Main ── */
 export default function AdminVacancies() {
-  const [vacs, setVacs] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState("all");
-  const [search, setSearch] = useState("");
+  const [vacs,      setVacs]      = useState([]);
+  const [loading,   setLoading]   = useState(true);
+  const [filter,    setFilter]    = useState("all");
+  const [search,    setSearch]    = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [delId,     setDelId]     = useState(null);
+  const [toast,     setToast]     = useState(null);
+  const [page,      setPage]      = useState(1);
 
-  useEffect(() => {
-    const t = setTimeout(() => { setVacs(MOCK_VACANCIES); setLoading(false); }, 600);
-    return () => clearTimeout(t);
-  }, []);
+  const showToast = (msg,type="success")=>{ setToast({msg,type}); setTimeout(()=>setToast(null),3000); };
 
-  const toggleStatus = (id) => {
-    setVacs(v => v.map(vac =>
-      vac.id === id
-        ? { ...vac, status: vac.status === "active" ? "paused" : "active" }
-        : vac
-    ));
+  const fetchJobs = async () => {
+    try { const r = await api.get("/jobs"); setVacs(r.data); }
+    catch(e){ console.error(e); } finally { setLoading(false); }
   };
 
-  const filtered = vacs.filter(v => {
-    const matchStatus = filter === "all" || v.status === filter;
-    const matchSearch = v.title.toLowerCase().includes(search.toLowerCase()) ||
-                        v.dept.toLowerCase().includes(search.toLowerCase());
-    return matchStatus && matchSearch;
+  useEffect(()=>{ fetchJobs(); },[]);
+
+  const toggleStatus = async (id, cur) => {
+    try {
+      const ns = cur==="active"?"paused":"active";
+      await api.put(`/jobs/${id}`,{status:ns}); fetchJobs(); showToast(`Job ${ns==="active"?"activated":"paused"}`);
+    } catch { showToast("Failed to update","error"); }
+  };
+
+  const confirmDelete = async () => {
+    try { await api.delete(`/jobs/${delId}`); fetchJobs(); setDelId(null); showToast("Vacancy deleted"); }
+    catch { showToast("Failed to delete","error"); }
+  };
+
+  const filtered = vacs.filter(v=>{
+    const mStatus = filter==="all"||v.status===filter;
+    const mSearch = v.title.toLowerCase().includes(search.toLowerCase())||v.dept.toLowerCase().includes(search.toLowerCase());
+    return mStatus && mSearch;
   });
 
-  const totalApplicants = vacs.reduce((s, v) => s + v.applicants, 0);
+  const totalPages = Math.ceil(filtered.length/PER_PAGE);
+  const pageSlice  = filtered.slice((page-1)*PER_PAGE, page*PER_PAGE);
+
+  const KPI = [
+    { label:"Active",     value:vacs.filter(v=>v.status==="active").length,   color:"#16a34a" },
+    { label:"Paused",     value:vacs.filter(v=>v.status==="paused").length,   color:"#d97706" },
+    { label:"Closed",     value:vacs.filter(v=>v.status==="closed").length,   color:"#6b7280" },
+    { label:"Applicants", value:vacs.reduce((s,v)=>s+(v.applicants||0),0),   color:"#7c3aed" },
+  ];
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Vacancies"
-        subtitle={`${vacs.filter(v => v.status === "active").length} active positions · ${totalApplicants} total applicants`}
-      >
-        <SearchBar placeholder="Search vacancies..." value={search} onChange={e => setSearch(e.target.value)} />
-        <GhostBtn icon={Download}>Export</GhostBtn>
-        <PrimaryBtn icon={Plus} onClick={() => setShowModal(true)}>Post Job</PrimaryBtn>
+    <div className="space-y-5">
+      <PageHeader title="Vacancies" subtitle={`${vacs.filter(v=>v.status==="active").length} active positions open`}>
+        <SearchBar placeholder="Search title, department…" value={search} onChange={e=>{setSearch(e.target.value);setPage(1);}}/>
+        <PrimaryBtn icon={Plus} onClick={()=>setShowModal(true)}>Post Job</PrimaryBtn>
       </PageHeader>
 
-      {/* Summary */}
+      {/* KPI */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {[
-          { label: "Active",    value: vacs.filter(v => v.status === "active").length,  color: "#16a34a", bg: "#f0fdf4" },
-          { label: "Paused",    value: vacs.filter(v => v.status === "paused").length,  color: "#d97706", bg: "#fffbeb" },
-          { label: "Closed",    value: vacs.filter(v => v.status === "closed").length,  color: "#6b7280", bg: "#f9fafb" },
-          { label: "Applicants",value: totalApplicants,                                  color: "#7c3aed", bg: "#f5f3ff" },
-        ].map((s, i) => (
-          <Reveal key={i} delay={i * 0.06}>
-            <div className="rounded-2xl border-2 border-black p-4 text-center" style={{ background: s.bg }}>
-              <p className="font-bold text-2xl" style={{ fontFamily: "'Fraunces',serif", color: s.color }}>{s.value}</p>
-              <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest mt-1">{s.label}</p>
+        {KPI.map((s,i)=>(
+          <Reveal key={i} delay={i*.05}>
+            <div className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm text-center hover:border-violet-200 transition-all">
+              <p className="font-bold text-2xl" style={{fontFamily:"'Fraunces',serif",color:s.color}}>{s.value}</p>
+              <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-1">{s.label}</p>
             </div>
           </Reveal>
         ))}
       </div>
 
-      {/* Filters */}
+      {/* Filter tabs */}
       <div className="flex gap-2 flex-wrap">
-        {["all","active","paused","closed"].map(f => (
-          <PillFilter key={f} label={f === "all" ? "All" : f} active={filter === f} onClick={() => setFilter(f)} />
+        {[["all","All Jobs"],["active","Active"],["paused","Paused"],["closed","Closed"]].map(([v,l])=>(
+          <PillFilter key={v} label={l} active={filter===v} onClick={()=>{setFilter(v);setPage(1);}}/>
         ))}
       </div>
 
       {/* Cards */}
-      {loading ? (
-        <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
-          {Array(6).fill(0).map((_, i) => (
-            <div key={i} className="bg-white rounded-2xl border-2 border-black p-6 animate-pulse h-64">
-              <div className="flex justify-between mb-4">
-                <div className="w-12 h-12 rounded-xl bg-gray-100" />
-                <div className="w-16 h-6 rounded-full bg-gray-100" />
-              </div>
-              <div className="space-y-2">
-                <div className="h-4 bg-gray-100 rounded-full w-3/4" />
-                <div className="h-3 bg-gray-100 rounded-full w-1/2" />
-                <div className="h-3 bg-gray-100 rounded-full w-2/3" />
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
-          {filtered.map((vac, i) => (
-            <VacancyCard key={vac.id} vac={vac} i={i} onToggle={toggleStatus} />
-          ))}
-          {filtered.length === 0 && (
-            <div className="col-span-full text-center py-20 text-gray-400">
-              <p className="text-4xl mb-3">📋</p>
-              <p className="font-bold text-slate-700 text-lg">No vacancies found</p>
-              <p className="text-sm mt-1">Try changing your filter or post a new role.</p>
-            </div>
-          )}
-        </div>
+      {loading ? <CardSkeleton count={6}/> : (
+        <>
+          <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
+            {pageSlice.map((vac,i)=><VacancyCard key={vac._id} vac={vac} i={i} onToggle={toggleStatus} onDelete={id=>setDelId(id)}/>)}
+          </div>
+          {filtered.length===0 && <EmptyState icon="💼" title="No vacancies found" desc="Post a new role or change the filter."/>}
+          <Pagination page={page} totalPages={totalPages} total={filtered.length} perPage={PER_PAGE} onPrev={()=>setPage(p=>p-1)} onNext={()=>setPage(p=>p+1)}/>
+        </>
       )}
 
-      {/* Modal */}
       <AnimatePresence>
-        {showModal && <PostJobModal onClose={() => setShowModal(false)} />}
+        {showModal && <PostJobModal onClose={()=>setShowModal(false)} fetchJobs={fetchJobs}/>}
+        {delId     && <ConfirmDialog message="Permanently delete this job posting?" onConfirm={confirmDelete} onCancel={()=>setDelId(null)}/>}
+        {toast     && <Toast message={toast.msg} type={toast.type} onClose={()=>setToast(null)}/>}
       </AnimatePresence>
     </div>
   );
